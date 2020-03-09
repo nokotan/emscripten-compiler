@@ -251,8 +251,22 @@ function build_project(project, base) {
     return complete(false, 'Error during linking');
   }
   
-  build_result.output = serialize_file_data(result, compress);
-  build_result.jsFile = serialize_file_data(`${base}.js`, compress);
+  const build_output = {
+    files: [
+      {
+        name: "a.wasm",
+        type: "binary",
+        data: serialize_file_data(result, compress)
+      },
+      {
+        name: "a.js",
+        type: "text",
+        data: serialize_file_data(`${base}.js`, compress)
+      }
+    ]
+  }
+
+  build_result.output = JSON.stringify(build_output);
   return complete(true, 'Success');
 }
 
