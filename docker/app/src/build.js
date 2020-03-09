@@ -117,7 +117,7 @@ function get_file_data(filename, compress) {
 
 function build_c_file(input, options, output, cwd, compress, result_obj) {
   // const cmd = llvmDir + '/bin/clang ' + get_clang_options(options) + ' ' + input + ' -o ' + output;
-  const cmd = 'EMCC_DEBUG=1 ' + emccDir + '/emcc ' + get_clang_options(options) + ' ' + input + ' -o ' + output;
+  const cmd = emccDir + '/emcc ' + get_clang_options(options) + ' ' + input + ' -o ' + output;
   const out = shell_exec(cmd, cwd);
   result_obj.console = sanitize_shell_output(out);
   if (!existsSync(output)) {
@@ -131,7 +131,7 @@ function build_c_file(input, options, output, cwd, compress, result_obj) {
 
 function build_cpp_file(input, options, output, cwd, compress, result_obj) {
   // const cmd = llvmDir + '/bin/clang++ ' + get_clang_options(options) + ' ' + input + ' -o ' + output;
-  const cmd = 'EMCC_DEBUG=1 ' + emccDir + '/em++ ' + get_clang_options(options) + ' ' + input + ' -o ' + output;
+  const cmd = emccDir + '/em++ ' + get_clang_options(options) + ' ' + input + ' -o ' + output;
   const out = shell_exec(cmd, cwd);
   result_obj.console = sanitize_shell_output(out);
   if (!existsSync(output)) {
@@ -161,10 +161,10 @@ function link_obj_files(obj_files, options, cwd, has_cpp, output, result_obj) {
   let clang;
   if (has_cpp) {
     // clang = llvmDir + '/bin/clang++';
-    clang = 'EMCC_DEBUG=1 ' + emccDir + '/em++';
+    clang = emccDir + '/em++';
   } else {
     // clang = llvmDir + '/bin/clang';    
-    clang = 'EMCC_DEBUG=1 ' + emccDir + '/emcc';    
+    clang = emccDir + '/emcc';    
   }
   const cmd = clang + ' ' + get_lld_options(options) + ' ' + files + ' -o ' + output;
   const out = shell_exec(cmd, cwd);
@@ -182,7 +182,8 @@ function build_project(project, base) {
   const compress = project.compress;
   const build_result = { };
   const dir = base + '.$';
-  const result = base + '.wasm';
+  const result = dir + '/main.wasm';
+  const resultJS = dir + '/main.js';
 
   const complete = (success, message) => {
     shell_exec("rm -rf " + dir);
@@ -247,7 +248,7 @@ function build_project(project, base) {
     name: 'linking wasm'
   };
   build_result.tasks.push(link_result_obj);
-  if (!link_obj_files(obj_files, link_options, dir, clang_cpp, `${base}.js`, link_result_obj)) {
+  if (!link_obj_files(obj_files, link_options, dir, clang_cpp, resultJS, link_result_obj)) {
     return complete(false, 'Error during linking');
   }
   
@@ -261,7 +262,7 @@ function build_project(project, base) {
       {
         name: "a.js",
         type: "text",
-        data: serialize_file_data(`${base}.js`, compress)
+        data: serialize_file_data(resultJS, compress)
       }
     ]
   }
@@ -271,8 +272,7 @@ function build_project(project, base) {
 }
 
 module.exports = (input, callback) => {
-  // const baseName = tempDir + '/build_' + Math.random().toString(36).slice(2);
-  const baseName = tempDir + '/main';
+  const baseName = tempDir + '/build_' + Math.random().toString(36).slice(2);
   try {
     console.log('Building in ', baseName);
     const result = build_project(input, baseName);
