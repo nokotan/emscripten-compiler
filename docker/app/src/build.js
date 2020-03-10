@@ -69,7 +69,19 @@ function get_clang_options(options) {
   const available_options = [
     '-O0', '-O1', '-O2', '-O3', '-O4', '-Os', '-fno-exceptions', '-fno-rtti',
     '-ffast-math', '-fno-inline', '-std=c99', '-std=c89', '-std=c++14',
-    '-std=c++1z', '-std=c++11', '-std=c++98', '-g'
+    '-std=c++1z', '-std=c++11', '-std=c++98', '-g',
+    '-s', 'ALLOW_MEMORY_GROWTH=1', 
+    'DISABLE_EXCEPTION_CATCHING=0', 'DISABLE_EXCEPTION_CATCHING=2',
+    'SIMD=1', 'DEMANGLE_SUPPORT=1',
+    'FULL_ES2=1', 'FULL_ES3=1', 'USE_WEBGPU=1', 
+    'ASYNCIFY=1', 'EXPORT_ALL=1',
+    'MAIN_MODULE=1', 'SIDE_MODULE=1', 'STRICT_JS=1',
+    'USE_SDL=0', 'USE_SDL_IMAGE=0', 'USE_SDL_TTF=0', 'USE_SDL_NET=0',
+    'USE_SDL=2', 'USE_SDL_IMAGE=2', 'USE_SDL_TTF=2', 'USE_SDL_NET=2',
+    'USE_ZLIB=1', 'USE_LIBJPEG=1', 'USE_LIBPNG=1',
+    'USE_BULLET=1', 'USE_VORBIS=1', 'USE_OGG=1', 'USE_FREETYPE=1',
+    'FETCH=1', 'MINIMAL_RUNTIME=1',
+    '--use-preload-plugins', '--emrun'
   ];
   let safe_options = '-c';
   for (let o of available_options) {
@@ -89,7 +101,21 @@ function get_lld_options(options) {
   if (!options) {
     return clang_flags;
   }
-  const available_options = ['--import-memory', '-g'];
+  const available_options = [
+    '--import-memory', '-g',
+    '-s', 'ALLOW_MEMORY_GROWTH=1', 
+    'DISABLE_EXCEPTION_CATCHING=0', 'DISABLE_EXCEPTION_CATCHING=2',
+    'SIMD=1', 'DEMANGLE_SUPPORT=1',
+    'FULL_ES2=1', 'FULL_ES3=1', 'USE_WEBGPU=1', 
+    'ASYNCIFY=1', 'EXPORT_ALL=1',
+    'MAIN_MODULE=1', 'SIDE_MODULE=1', 'STRICT_JS=1',
+    'USE_SDL=0', 'USE_SDL_IMAGE=0', 'USE_SDL_TTF=0', 'USE_SDL_NET=0',
+    'USE_SDL=2', 'USE_SDL_IMAGE=2', 'USE_SDL_TTF=2', 'USE_SDL_NET=2',
+    'USE_ZLIB=1', 'USE_LIBJPEG=1', 'USE_LIBPNG=1',
+    'USE_BULLET=1', 'USE_VORBIS=1', 'USE_OGG=1', 'USE_FREETYPE=1',
+    'FETCH=1', 'MINIMAL_RUNTIME=1',
+    '--use-preload-plugins', '--emrun'
+  ];
   let safe_options = '';
   for (let o of available_options) {
     if (options.includes(o)) {
