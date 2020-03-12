@@ -33,10 +33,10 @@ jobs:
       - run:
           name: Check emscripten version and update
           command: |
-            Versions=(`curl -s https://api.github.com/repos/emscripten-core/emscripten/tags | jq --raw-output .[].name | awk '/^[0-9.]+$/'`
-            LatestVersion=Versions[0]
+            Versions=(`curl -s https://api.github.com/repos/emscripten-core/emscripten/tags | jq --raw-output .[].name | awk '/^[0-9.]+$/'`)
+            LatestVersion=${Versions[0]}
             # Update
-            sed -ie "s/ARG EMSCRIPTEN_VERSION=.*$/ARG EMSCRIPTEN_VERSION=${LatestVersion}/g" Dockerfile
+            sed -i -e "s/ARG EMSCRIPTEN_VERSION=.*$/ARG EMSCRIPTEN_VERSION=${LatestVersion}/g" Dockerfile
             git add Dockerfile
             set +o pipefail
             git commit -m "Update: CircleCI has updated emscripten to ${LatestVersion}" | true
