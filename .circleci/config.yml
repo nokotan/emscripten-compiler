@@ -17,6 +17,10 @@ jobs:
       - image: alpine
     
     steps:
+      - add_ssh_keys:
+          fingerprints:
+            - "70:1d:2f:c4:ed:49:59:73:6d:2b:7d:4d:02:74:f9:8f"
+
       - run:
           name: Install packages
           command: apk --update --no-cache add bash git curl openssh-client jq
