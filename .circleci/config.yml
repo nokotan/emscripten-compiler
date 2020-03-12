@@ -1,0 +1,50 @@
+version: 2.1
+
+jobs:
+  update_version:
+    working_directory: /docker
+    docker:
+      - image: alpine
+    
+    steps:
+      - run:
+        name: Install packages
+        command: apk --update --no-cache add bash git curl jq
+      
+      - checkout
+
+      - run:
+        name: Update git profiles
+        command: |
+          git config push.default current
+          git config user.name "CircleCI bot"
+          git config user.email ${EMAIL}
+
+      - run:
+        name: Check emscripten version and update
+        command: |
+          Versions=(`curl -s https://api.github.com/repos/emscripten-core/emscripten/tags | jq --raw-output .[].name | awk '/^[0-9.]+$/'`
+          LatestVersion=Versions[0]
+          # Update
+          sed -ie "s/ARG EMSCRIPTEN_VERSION=.*$/ARG EMSCRIPTEN_VERSION=${LatestVersion}/g" Dockerfile
+          git add Dockerfile
+          set +o pipefail
+          git commit -m "Update: CircleCI has updated emscripten to ${LatestVersion}" | true
+          git tag -a ${LatestVersion} -m "emscripten ${LatestVersion}" | true
+          set -o pipefail
+          git push origin --tags
+          git push origin
+
+workflows:
+  version: 2
+
+  daily_update:
+    triggers:
+      - schedule:
+          # START UTC 21:00(JST 6:00)
+          cron: "0 21 * * *"
+          filters:
+            branches:
+              only: master
+    jobs:
+      - update_version
