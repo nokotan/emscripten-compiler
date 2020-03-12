@@ -294,9 +294,9 @@ WORKDIR /src
 
 # ------------------------------------------------------------------------------
 # Copy this Dockerimage into image, so that it will be possible to recreate it later
-COPY Dockerfile /emsdk_portable/dockerfiles/trzeci/emscripten-slim/
+COPY docker/Dockerfile /emsdk_portable/dockerfiles/trzeci/emscripten-slim/
 
-COPY app/ /app/
+COPY docker/app/ /app/
 
 LABEL maintainer="kontakt@trzeci.eu" \
       org.label-schema.name="emscripten-slim" \
