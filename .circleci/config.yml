@@ -50,6 +50,7 @@ workflows:
 
   build:
     jobs:
+      - build
 
   daily_update:
     triggers:
