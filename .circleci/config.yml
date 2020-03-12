@@ -32,7 +32,9 @@ jobs:
 
       - run:
           name: Check emscripten version and update
-          command: bash docker/UpdateEmscripten.sh
+          command: |
+            cd docker
+            bash UpdateEmscripten.sh
 
 workflows:
   version: 2
