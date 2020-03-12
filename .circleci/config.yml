@@ -2,7 +2,7 @@ version: 2.1
 
 jobs:
   build:
-    working_directory: /docker
+    working_directory: ~/docker
     docker:
       - image: docker:stable
 
@@ -12,14 +12,14 @@ jobs:
           command: echo Hei
 
   update_version:
-    working_directory: /docker
+    working_directory: ~/docker
     docker:
       - image: alpine
     
     steps:
       - run:
           name: Install packages
-          command: apk --update --no-cache add bash git curl jq
+          command: apk --update --no-cache add bash git curl openssh-client jq
       
       - checkout
 
