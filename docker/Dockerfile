@@ -46,18 +46,6 @@ RUN echo "## Update and install packages" \
 &&  echo "## Done"
 
 
-RUN	echo "## Installing CMake" \
-    &&	wget https://cmake.org/files/v3.14/cmake-3.14.3-Linux-x86_64.sh -q \
-    &&	mkdir /opt/cmake \
-    &&	printf "y\nn\n" | sh cmake-3.14.3-Linux-x86_64.sh --prefix=/opt/cmake > /dev/null \
-    &&		rm -fr cmake*.sh /opt/cmake/doc \
-    &&		rm -fr /opt/cmake/bin/cmake-gui \
-    &&		rm -fr /opt/cmake/bin/ccmake \
-    &&		rm -fr /opt/cmake/bin/cpack \
-    &&	ln -s /opt/cmake/bin/cmake /usr/local/bin/cmake \
-    &&	ln -s /opt/cmake/bin/ctest /usr/local/bin/ctest
-
-
 RUN  echo "## Get EMSDK" \
     &&  git clone https://github.com/emscripten-core/emsdk.git ${EMSDK} && cd ${EMSDK} && git reset --hard ${EMSDK_CHANGESET} \
         \
@@ -141,7 +129,7 @@ RUN apt-get -qq -y update && apt-get -qq install -y --no-install-recommends \
     && strip -s `which node` \
     # && strip -s `which asm2wasm` \ # extra just 1 MB, not worth to do it in favor of better bugtracking
     # strip out symbols from clang (extra 50MB!)
-    && find $(dirname $(which clang-6.0)) -type f -exec strip -s {} + || true \
+    && find $(dirname $(which clang-6.0)) -type f -exec strip -s {} + &> /dev/null || true \
 &&  echo "## Done"
 
 # ------------------------------------------------------------------------------
@@ -213,10 +201,10 @@ RUN echo "## Create symbolic links" \
     \
     &&  mkdir -p ${EMSDK}/llvm ${EMSDK}/emscripten ${EMSDK}/binaryen \
     \
-    &&  ln -s $(dirname $(which node))/..       ${EMSDK}/node/current \
-    &&  ln -s $(dirname $(which clang))/..      ${EMSDK}/llvm/clang \
-    &&  ln -s $(dirname $(which emcc))          ${EMSDK}/emscripten/sdk \
-    &&  ln -s $(dirname $(which asm2wasm))      ${EMSDK}/binaryen/bin \
+    &&  echo $(which node) && ln -s $(dirname $(which node))/..       ${EMSDK}/node/current \
+    &&  echo $(which clang) && ln -s $(dirname $(which clang))/..      ${EMSDK}/llvm/clang \
+    &&  echo $(which emcc) && ln -s $(dirname $(which emcc))          ${EMSDK}/emscripten/sdk \
+    &&  echo $(which asm2wasm) && ln -s $(dirname $(which asm2wasm))      ${EMSDK}/binaryen/bin \
     \
     &&  echo "## Done"
 
