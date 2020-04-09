@@ -62,7 +62,7 @@ function shell_exec(cmd, cwd = tempDir) {
 
 function get_clang_options(options) {
   // const clang_flags = `--target=wasm32-unknown-unknown-wasm --sysroot=${sysroot} -fdiagnostics-print-source-range-info -fno-exceptions`;
-  const clang_flags = `-s MAIN_MODULE=1 -s FULL_ES3=1 -s ALLOW_MEMORY_GROWTH=1 -s DISABLE_EXCEPTION_CATCHING=0`;
+  const clang_flags = `-s MAIN_MODULE=1 -s FULL_ES2=1 -s ALLOW_MEMORY_GROWTH=1 -s DISABLE_EXCEPTION_CATCHING=0`;
   if (!options) {
     return clang_flags;
   }
