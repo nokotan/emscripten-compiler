@@ -302,6 +302,7 @@ module.exports = (input, callback) => {
   try {
     console.log('Building in ', baseName);
     const result = build_project(input, baseName);
+    console.log(result);
     callback(null, result);
   } catch (ex) {
     callback(ex);

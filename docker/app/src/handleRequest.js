@@ -43,8 +43,6 @@ module.exports = function handleRequest(req, res) {
     return;
   }
 
-  console.log(req);
-
   if (req.url == "/service.php") {
     if (req.method != "POST") return notAllowed(res);
     readFormData(req, "form", (err, post) => {
