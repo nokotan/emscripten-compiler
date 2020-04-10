@@ -45,7 +45,7 @@ jobs:
           shell: bash
           command: |
             cd docker
-            ./UpdateEmscripten.sh
+            bash UpdateEmscripten.sh
 
 
   update_docker:
@@ -69,7 +69,7 @@ jobs:
           shell: bash
           command: |
             cd docker
-            ./UpdateDockerHub.sh
+            bash UpdateDockerHub.sh
 
 workflows:
   version: 2
