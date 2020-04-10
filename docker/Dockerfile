@@ -229,6 +229,9 @@ ENV EM_PORTS ${EM_DATA}/ports
 # Expose Major tools to system PATH, so that emcc, node, asm2wasm etc can be used without activation
 ENV PATH="${EMSDK}:${EMSDK}/emscripten/sdk:${EMSDK}/llvm/clang/bin:${EMSDK}/node/current/bin:${EMSDK}/binaryen/bin:${PATH}"
 
+ENV LANG=C.UTF-8
+# ENV PYTHONIOENCODING="'utf-8':'replace'"
+
 # Use entrypoint that's coming from emscripten-slim image. It sets all required system paths and variables
 ENTRYPOINT ["/emsdk_portable/entrypoint"]
 
