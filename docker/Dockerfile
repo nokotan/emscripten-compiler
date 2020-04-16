@@ -175,7 +175,7 @@ RUN echo "## Pre-populate cache" \
         &&  printf '#include <iostream>\nint main(){std::cout << "HELLO FROM DOCKER C++"<<std::endl;return 0;}' > test.cpp \
         # &&  em++ --std=c++11 test.cpp -o test.js -s WASM=0 &&  node test.js \
         # &&  em++ --std=c++11 -g4 test.cpp -o test.js -s WASM=0 &&  node test.js \
-        # &&  em++ --std=c++11 test.cpp -o test.js -s WASM=1 &&  node test.js \
+        &&  em++ --std=c++11 test.cpp -o test.js -s WASM=1 -s USE_SDL=2 &&  node test.js \
         &&  em++ --std=c++11 test.cpp -o test.js -s WASM=1 -s MAIN_MODULE=1 &&  node test.js \
     \
     &&  cd / \

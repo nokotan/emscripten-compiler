@@ -41,8 +41,12 @@ const { Writable } = require("stream");
 //     ]
 // }
 
-function sanitize_shell_output(out) {
-  return out; // FIXME
+function generate_regexp_from_pattern(pattern) {
+  return new RegExp(pattern.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
+}
+
+function sanitize_shell_output(out, cwd) {
+  return out.replace(generate_regexp_from_pattern(cwd), ''); // FIXME
 }
 
 function shell_exec(cmd, cwd = tempDir) {
@@ -62,25 +66,27 @@ function shell_exec(cmd, cwd = tempDir) {
 
 function get_clang_options(options) {
   // const clang_flags = `--target=wasm32-unknown-unknown-wasm --sysroot=${sysroot} -fdiagnostics-print-source-range-info -fno-exceptions`;
-  const clang_flags = `-s MAIN_MODULE=1 -s FULL_ES2=1 -s ALLOW_MEMORY_GROWTH=1 -s DISABLE_EXCEPTION_CATCHING=0`;
+  const clang_flags = ``;
   if (!options) {
     return clang_flags;
   }
   const available_options = [
     '-O0', '-O1', '-O2', '-O3', '-O4', '-Os', '-fno-exceptions', '-fno-rtti',
     '-ffast-math', '-fno-inline', '-std=c99', '-std=c89', '-std=c++14',
-    '-std=c++1z', '-std=c++11', '-std=c++98', '-g',
-    '-s', 'ALLOW_MEMORY_GROWTH=1', 
-    'DISABLE_EXCEPTION_CATCHING=0', 'DISABLE_EXCEPTION_CATCHING=2',
-    'SIMD=1', 'DEMANGLE_SUPPORT=1',
-    'FULL_ES2=1', 'FULL_ES3=1', 'USE_WEBGPU=1', 
-    'ASYNCIFY=1', 'EXPORT_ALL=1',
-    'MAIN_MODULE=1', 'SIDE_MODULE=1', 'STRICT_JS=1',
-    'USE_SDL=0', 'USE_SDL_IMAGE=0', 'USE_SDL_TTF=0', 'USE_SDL_NET=0',
-    'USE_SDL=2', 'USE_SDL_IMAGE=2', 'USE_SDL_TTF=2', 'USE_SDL_NET=2',
-    'USE_ZLIB=1', 'USE_LIBJPEG=1', 'USE_LIBPNG=1',
-    'USE_BULLET=1', 'USE_VORBIS=1', 'USE_OGG=1', 'USE_FREETYPE=1',
-    'FETCH=1', 'MINIMAL_RUNTIME=1',
+    '-std=c++1z', '-std=c++11', '-std=c++98',
+    '-g', '-Wall',
+    '-s ALLOW_MEMORY_GROWTH=1', 
+    '-s DISABLE_EXCEPTION_CATCHING=0', '-s DISABLE_EXCEPTION_CATCHING=2',
+    '-s SIMD=1', '-s DEMANGLE_SUPPORT=1',
+    '-s FULL_ES2=1', '-s FULL_ES3=1', '-s USE_WEBGPU=1', 
+    '-s ASYNCIFY=1', '-s EXPORT_ALL=1',
+    '-s MAIN_MODULE=1', '-s SIDE_MODULE=1', '-s STRICT_JS=1',
+    '-s MAIN_MODULE=2', '-s SIDE_MODULE=2',
+    '-s USE_SDL=0', '-s USE_SDL_IMAGE=0', '-s USE_SDL_TTF=0', '-s USE_SDL_NET=0',
+    '-s USE_SDL=2', '-s USE_SDL_IMAGE=2', '-s USE_SDL_TTF=2', '-s USE_SDL_NET=2',
+    '-s USE_ZLIB=1', '-s USE_LIBJPEG=1', '-s USE_LIBPNG=1',
+    '-s USE_BULLET=1', '-s USE_VORBIS=1', '-s USE_OGG=1', '-s USE_FREETYPE=1',
+    '-s FETCH=1', '-s MINIMAL_RUNTIME=1',
     '--use-preload-plugins', '--emrun'
   ];
   let safe_options = '-c';
@@ -97,29 +103,31 @@ function get_clang_options(options) {
 
 function get_lld_options(options) {
   // const clang_flags = `--target=wasm32-unknown-unknown-wasm --sysroot=${sysroot} -nostartfiles -Wl,--allow-undefined,--no-entry,--no-threads,--export-dynamic`;
-  const clang_flags = `-s MAIN_MODULE=1 -s FULL_ES2=1 -s ALLOW_MEMORY_GROWTH=1 -s DISABLE_EXCEPTION_CATCHING=0`;
+  const clang_flags = ``;
   if (!options) {
     return clang_flags;
   }
   const available_options = [
     '--import-memory', '-g',
-    '-s', 'ALLOW_MEMORY_GROWTH=1', 
-    'DISABLE_EXCEPTION_CATCHING=0', 'DISABLE_EXCEPTION_CATCHING=2',
-    'SIMD=1', 'DEMANGLE_SUPPORT=1',
-    'FULL_ES2=1', 'FULL_ES3=1', 'USE_WEBGPU=1', 
-    'ASYNCIFY=1', 'EXPORT_ALL=1',
-    'MAIN_MODULE=1', 'SIDE_MODULE=1', 'STRICT_JS=1',
-    'USE_SDL=0', 'USE_SDL_IMAGE=0', 'USE_SDL_TTF=0', 'USE_SDL_NET=0',
-    'USE_SDL=2', 'USE_SDL_IMAGE=2', 'USE_SDL_TTF=2', 'USE_SDL_NET=2',
-    'USE_ZLIB=1', 'USE_LIBJPEG=1', 'USE_LIBPNG=1',
-    'USE_BULLET=1', 'USE_VORBIS=1', 'USE_OGG=1', 'USE_FREETYPE=1',
-    'FETCH=1', 'MINIMAL_RUNTIME=1',
+    '-O0', '-O1', '-O2', '-O3', '-O4', '-Os',
+    '-s ALLOW_MEMORY_GROWTH=1', 
+    '-s DISABLE_EXCEPTION_CATCHING=0', '-s DISABLE_EXCEPTION_CATCHING=2',
+    '-s SIMD=1', '-s DEMANGLE_SUPPORT=1',
+    '-s FULL_ES2=1', '-s FULL_ES3=1', '-s USE_WEBGPU=1', 
+    '-s ASYNCIFY=1', '-s EXPORT_ALL=1',
+    '-s MAIN_MODULE=1', '-s SIDE_MODULE=1', '-s STRICT_JS=1',
+    '-s MAIN_MODULE=2', '-s SIDE_MODULE=2',
+    '-s USE_SDL=0', '-s USE_SDL_IMAGE=0', '-s USE_SDL_TTF=0', '-s USE_SDL_NET=0',
+    '-s USE_SDL=2', '-s USE_SDL_IMAGE=2', '-s USE_SDL_TTF=2', '-s USE_SDL_NET=2',
+    '-s USE_ZLIB=1', '-s USE_LIBJPEG=1', '-s USE_LIBPNG=1',
+    '-s USE_BULLET=1', '-s USE_VORBIS=1', '-s USE_OGG=1', '-s USE_FREETYPE=1',
+    '-s FETCH=1', '-s MINIMAL_RUNTIME=1',
     '--use-preload-plugins', '--emrun'
   ];
   let safe_options = '';
   for (let o of available_options) {
     if (options.includes(o)) {
-      safe_options += ' -Wl,' + o;
+      safe_options += ' ' + o;
     }
   }
   return clang_flags + safe_options;
@@ -145,13 +153,13 @@ function build_c_file(input, options, output, cwd, compress, result_obj) {
   // const cmd = llvmDir + '/bin/clang ' + get_clang_options(options) + ' ' + input + ' -o ' + output;
   const cmd = emccDir + '/emcc ' + get_clang_options(options) + ' ' + input + ' -o ' + output;
   const out = shell_exec(cmd, cwd);
-  result_obj.console = sanitize_shell_output(out);
+  result_obj.console = sanitize_shell_output(out, cwd);
   if (!existsSync(output)) {
     result_obj.success = false;
     return false;
   }
   result_obj.success = true;
-  result_obj.output = serialize_file_data(output, compress);
+  // result_obj.output = serialize_file_data(output, compress);
   return true;
 }
 
@@ -159,13 +167,13 @@ function build_cpp_file(input, options, output, cwd, compress, result_obj) {
   // const cmd = llvmDir + '/bin/clang++ ' + get_clang_options(options) + ' ' + input + ' -o ' + output;
   const cmd = emccDir + '/em++ ' + get_clang_options(options) + ' ' + input + ' -o ' + output;
   const out = shell_exec(cmd, cwd);
-  result_obj.console = sanitize_shell_output(out);
+  result_obj.console = sanitize_shell_output(out, cwd);
   if (!existsSync(output)) {
     result_obj.success = false;
     return false;
   }
   result_obj.success = true;
-  result_obj.output = serialize_file_data(output, compress);
+  // result_obj.output = serialize_file_data(output, compress);
   return true;
 }
 
@@ -194,7 +202,7 @@ function link_obj_files(obj_files, options, cwd, has_cpp, output, result_obj) {
   }
   const cmd = clang + ' ' + get_lld_options(options) + ' ' + files + ' -o ' + output;
   const out = shell_exec(cmd, cwd);
-  result_obj.console = sanitize_shell_output(out);
+  result_obj.console = sanitize_shell_output(out, cwd);
   if (!existsSync(output)) {
     result_obj.success = false;
     return false;
@@ -208,13 +216,13 @@ function build_project(project, base) {
   const compress = project.compress;
   const build_result = { };
   const dir = base + '.$';
-  const result = dir + '/main.wasm';
-  const resultJS = dir + '/main.js';
+  const result_wasm = dir + '/main.wasm';
+  const result_js = dir + '/main.js';
 
   const complete = (success, message) => {
     shell_exec("rm -rf " + dir);
-    if (existsSync(result)) {
-      unlinkSync(result);
+    if (existsSync(result_wasm)) {
+      unlinkSync(result_wasm);
     }
   
     build_result.success = success;
@@ -274,7 +282,7 @@ function build_project(project, base) {
     name: 'linking wasm'
   };
   build_result.tasks.push(link_result_obj);
-  if (!link_obj_files(obj_files, link_options, dir, clang_cpp, resultJS, link_result_obj)) {
+  if (!link_obj_files(obj_files, link_options, dir, clang_cpp, result_js, link_result_obj)) {
     return complete(false, 'Error during linking');
   }
   
@@ -283,12 +291,12 @@ function build_project(project, base) {
       {
         name: "a.wasm",
         type: "binary",
-        data: serialize_file_data(result, compress)
+        data: serialize_file_data(result_wasm, compress)
       },
       {
         name: "a.js",
         type: "text",
-        data: serialize_file_data(resultJS, compress)
+        data: serialize_file_data(result_js, compress)
       }
     ]
   }
@@ -302,7 +310,6 @@ module.exports = (input, callback) => {
   try {
     console.log('Building in ', baseName);
     const result = build_project(input, baseName);
-    console.log(result);
     callback(null, result);
   } catch (ex) {
     callback(ex);
