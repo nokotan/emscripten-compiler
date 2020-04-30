@@ -71,14 +71,21 @@ function get_clang_options(options) {
     return clang_flags;
   }
   const available_options = [
-    '-O0', '-O1', '-O2', '-O3', '-O4', '-Os', '-fno-exceptions', '-fno-rtti',
+    '-O0', '-O1', '-O2', '-O3', '-Oz', '-Os', '-fno-exceptions', '-fno-rtti',
     '-ffast-math', '-fno-inline', '-std=c99', '-std=c89', '-std=c++14',
-    '-std=c++1z', '-std=c++11', '-std=c++98',
+    '-std=c++17', '-std=c++11', '-std=c++98',
     '-g', '-Wall',
+    '-I/include/DxLib',
+    '-include-pch /include/DxLib/DxLib.O0.pch', '-include-pch /include/DxLib/DxLib.O2.pch',
+    '-include-pch /include/DxLib/DxLib.Oz.pch',
+    '-I/include/OpenSiv3D', '-I/include/OpenSiv3D/ThirdParty',
+    '-include-pch /include/OpenSiv3D/Siv3D.O0.pch', '-include-pch /include/OpenSiv3D/Siv3D.O2.pch',
+    '-include-pch /include/OpenSiv3D/Siv3D.Oz.pch',
     '-s ALLOW_MEMORY_GROWTH=1', 
     '-s DISABLE_EXCEPTION_CATCHING=0', '-s DISABLE_EXCEPTION_CATCHING=2',
     '-s SIMD=1', '-s DEMANGLE_SUPPORT=1',
-    '-s FULL_ES2=1', '-s FULL_ES3=1', '-s USE_WEBGPU=1', 
+    '-s FULL_ES2=1', '-s FULL_ES3=1', '-s USE_WEBGPU=1',
+    '-s USE_GLFW=3',
     '-s ASYNCIFY=1', '-s EXPORT_ALL=1',
     '-s MAIN_MODULE=1', '-s SIDE_MODULE=1', '-s STRICT_JS=1',
     '-s MAIN_MODULE=2', '-s SIDE_MODULE=2',
@@ -109,11 +116,12 @@ function get_lld_options(options) {
   }
   const available_options = [
     '--import-memory', '-g',
-    '-O0', '-O1', '-O2', '-O3', '-O4', '-Os',
+    // '-O0', '-O1', '-O2', '-O3', '-Oz', '-Os',
     '-s ALLOW_MEMORY_GROWTH=1', 
     '-s DISABLE_EXCEPTION_CATCHING=0', '-s DISABLE_EXCEPTION_CATCHING=2',
     '-s SIMD=1', '-s DEMANGLE_SUPPORT=1',
     '-s FULL_ES2=1', '-s FULL_ES3=1', '-s USE_WEBGPU=1', 
+    '-s USE_GLFW=3',
     '-s ASYNCIFY=1', '-s EXPORT_ALL=1',
     '-s MAIN_MODULE=1', '-s SIDE_MODULE=1', '-s STRICT_JS=1',
     '-s MAIN_MODULE=2', '-s SIDE_MODULE=2',
@@ -122,6 +130,7 @@ function get_lld_options(options) {
     '-s USE_ZLIB=1', '-s USE_LIBJPEG=1', '-s USE_LIBPNG=1',
     '-s USE_BULLET=1', '-s USE_VORBIS=1', '-s USE_OGG=1', '-s USE_FREETYPE=1',
     '-s FETCH=1', '-s MINIMAL_RUNTIME=1',
+    '-s FORCE_FILESYSTEM=1',
     '--use-preload-plugins', '--emrun'
   ];
   let safe_options = '';
