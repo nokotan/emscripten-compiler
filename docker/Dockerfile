@@ -288,6 +288,21 @@ WORKDIR /src
 COPY Dockerfile /emsdk_portable/dockerfiles/trzeci/emscripten-slim/
 
 COPY app/ /app/
+COPY include/ /include/
+
+RUN echo "## Generate .pch file for OpenSiv3D" \
+    && cd /include/OpenSiv3D \
+    && emcc -O0 -fPIC -fvisibility=default -std=c++17 -I/include/OpenSiv3D -I/include/OpenSiv3D/ThirdParty Siv3D.hpp -o Siv3D.O0.pch \
+    && emcc -O2 -fPIC -fvisibility=default -std=c++17 -I/include/OpenSiv3D -I/include/OpenSiv3D/ThirdParty Siv3D.hpp -o Siv3D.O2.pch \
+    && emcc -Oz -fPIC -fvisibility=default -std=c++17 -I/include/OpenSiv3D -I/include/OpenSiv3D/ThirdParty Siv3D.hpp -o Siv3D.Oz.pch \
+&& echo "## Done"
+
+RUN echo "## Generate .pch file for DxLib" \
+    && cd /include/DxLib \
+    && emcc -O0 -fPIC -fvisibility=default -std=c++17 -I/include/DxLib DxLib.h -o DxLib.O0.pch \
+    && emcc -O2 -fPIC -fvisibility=default -std=c++17 -I/include/DxLib DxLib.h -o DxLib.O2.pch \
+    && emcc -Oz -fPIC -fvisibility=default -std=c++17 -I/include/DxLib DxLib.h -o DxLib.Oz.pch \
+&& echo "## Done"
 
 LABEL maintainer="kontakt@trzeci.eu" \
       org.label-schema.name="emscripten-slim" \
