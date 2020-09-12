@@ -76,8 +76,8 @@ RUN cd ${EMSDK} \
     &&  ./emsdk construct_env > /dev/null \
         \
     # remove wrongly created entry with EM_CACHE, variable will be picked up from ENV
-    &&  sed -i -e "/EM_CACHE/d" ${EMSDK}/emsdk_set_env.sh \
-    &&  printf "export PATH=${EMSDK}/upstream/bin:\$PATH\n" >> ${EMSDK}/emsdk_set_env.sh \
+    &&  sed -i -e "/EM_CACHE/d" ${EMSDK}/emsdk_env.sh \
+    &&  printf "export PATH=${EMSDK}/upstream/bin:\$PATH\n" >> ${EMSDK}/emsdk_env.sh \
         \
 &&  echo "## Done"
 
@@ -124,7 +124,7 @@ RUN cd ${EMSDK} \
 
 RUN apt-get -qq -y update && apt-get -qq install -y --no-install-recommends \
         binutils \
-    && . ${EMSDK}/emsdk_set_env.sh \
+    && . ${EMSDK}/emsdk_env.sh \
     # Remove debugging symbols from embedded node (extra 7MB)
     && strip -s `which node` \
     # && strip -s `which asm2wasm` \ # extra just 1 MB, not worth to do it in favor of better bugtracking
@@ -156,7 +156,7 @@ RUN echo "## Create transferable entrypoint" \
     &&  printf "export EM_CACHE=${EM_CACHE}\n"                          >> ${EMSDK}/entrypoint \
     &&  printf "export EM_PORTS=${EM_PORTS}\n"                          >> ${EMSDK}/entrypoint \
     # Activate Emscripten SDK
-    &&  printf '. ${EMSDK}/emsdk_set_env.sh > /dev/null\n'              >> ${EMSDK}/entrypoint \
+    &&  printf '. ${EMSDK}/emsdk_env.sh > /dev/null\n'              >> ${EMSDK}/entrypoint \
     # Evaluate a command that's coming after `docker run` / `docker exec`
     &&  printf '"$@"\n'                                                 >> ${EMSDK}/entrypoint \
     \
@@ -167,7 +167,7 @@ RUN echo "## Create transferable entrypoint" \
 
 # Populate Emscripten SDK cache with libc++, to improve further compilation times.
 RUN echo "## Pre-populate cache" \
-    &&  . ${EMSDK}/emsdk_set_env.sh \
+    &&  . ${EMSDK}/emsdk_env.sh \
     \
     &&  mkdir -p /tmp/emscripten_test \
     &&  cd /tmp/emscripten_test \
@@ -197,7 +197,7 @@ RUN echo "## Pre-populate cache" \
 # Current solution is to create symlinks that matches old solution: which maintains compatibility
 # The ultimate goal is to simplify a way to use Emscripten SDK without a need to activate it.
 RUN echo "## Create symbolic links" \
-    &&  . ${EMSDK}/emsdk_set_env.sh \
+    &&  . ${EMSDK}/emsdk_env.sh \
     \
     &&  mkdir -p ${EMSDK}/llvm ${EMSDK}/emscripten ${EMSDK}/binaryen \
     \
@@ -314,7 +314,7 @@ LABEL maintainer="kontakt@trzeci.eu" \
 # ------------------------- POST BUILD IN-PLACE TESTING ------------------------
 
 RUN echo "## Internal Testing of image (activated)" \
-    &&  . ${EMSDK}/emsdk_set_env.sh \
+    &&  . ${EMSDK}/emsdk_env.sh \
     &&  set -x \
     # binaryen
     &&  which asm2wasm \
