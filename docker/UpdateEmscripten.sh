@@ -28,7 +28,7 @@ function do_update() {
 }
 
 EmscriptenVersionsInGithub=(`fetch_versions https://api.github.com/repos/emscripten-core/emscripten/tags '.[].name'`)
-EmscriptenVersionsInDockerhub=(`fetch_versions https://api.github.com/repos/nokotan/emscripten-compiler/tags '.results[].name'`)
+EmscriptenVersionsInDockerhub=(`fetch_versions https://registry.hub.docker.com/v2/repositories/nokotan/emscripten-compiler/tags/ '.results[].name'`)
 
 LatestVersion=${EmscriptenVersionsInGithub[0]}
 echo ${EmscriptenVersionsInGithub[@]}
