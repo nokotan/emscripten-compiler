@@ -72,11 +72,24 @@ RUN cd ${EMSDK} \
     &&  echo "## Generate standard configuration" \
         \
     &&  ./emsdk activate ${EMSCRIPTEN_SDK} --embedded \
-    &&  ./emsdk construct_env > /dev/null \
         \
-    # remove wrongly created entry with EM_CACHE, variable will be picked up from ENV
-    &&  sed -i -e "/EM_CACHE/d" ${EMSDK}/emsdk_env.sh \
-    &&  printf "export PATH=${EMSDK}/upstream/bin:\$PATH\n" >> ${EMSDK}/emsdk_env.sh \
+    &&  touch emsdk_set_env.sh \
+    # Export this image specific Environment variables
+    # Those variables are important to use dedicated folder for all cache and predefined config file
+    &&  printf "export EM_DATA=${EM_DATA}\n"                            >> ${EMSDK}/emsdk_set_env.sh \
+    &&  printf "export EM_CONFIG=${EM_CONFIG}\n"                        >> ${EMSDK}/emsdk_set_env.sh \
+    &&  printf "export EM_CACHE=${EM_CACHE}\n"                          >> ${EMSDK}/emsdk_set_env.sh \
+    &&  printf "export EM_PORTS=${EM_PORTS}\n"                          >> ${EMSDK}/emsdk_set_env.sh \
+    &&  printf "\n"                                                     >> ${EMSDK}/emsdk_set_env.sh \
+        \
+    # Import default emsdk config
+    &&  . ${EMSDK}/emsdk_env.sh \
+    &&  printf "export EMSDK=${EMSDK}\n"                                >> ${EMSDK}/emsdk_set_env.sh \
+    &&  printf "export EMSDK_NODE=${EMSDK_NODE}\n"                      >> ${EMSDK}/emsdk_set_env.sh \
+    &&  printf "export EMSDK_PYTHON=${EMSDK_PYTHON}\n"                  >> ${EMSDK}/emsdk_set_env.sh \
+    &&  printf "export PATH=$(dirname $(which emcc)):\${PATH}\n"        >> ${EMSDK}/emsdk_set_env.sh \
+    &&  printf "export PATH=$(dirname $(which node)):\${PATH}\n"        >> ${EMSDK}/emsdk_set_env.sh \
+    &&  printf "export PATH=${EMSDK}/upstream/bin:\${PATH}\n"             >> ${EMSDK}/emsdk_set_env.sh \
         \
 &&  echo "## Done"
 
@@ -121,7 +134,7 @@ RUN cd ${EMSDK} \
 
 RUN apt-get -qq -y update && apt-get -qq install -y --no-install-recommends \
         binutils \
-    && . ${EMSDK}/emsdk_env.sh \
+    && . ${EMSDK}/emsdk_set_env.sh \
     # Remove debugging symbols from embedded node (extra 7MB)
     && strip -s `which node` \
     # && strip -s `which asm2wasm` \ # extra just 1 MB, not worth to do it in favor of better bugtracking
@@ -145,15 +158,9 @@ RUN echo "## Create transferable entrypoint" \
     &&  printf 'then\n'                                                 >> ${EMSDK}/entrypoint \
     &&  printf '    umask 0000\n'                                       >> ${EMSDK}/entrypoint \
     &&  printf 'fi\n'                                                   >> ${EMSDK}/entrypoint \
-    # Export this image specific Environment variables
-    # Those variables are important to use dedicated folder for all cache and predefined config file
-    &&  printf "export EMSDK=${EMSDK}\n"                                >> ${EMSDK}/entrypoint \
-    &&  printf "export EM_DATA=${EM_DATA}\n"                            >> ${EMSDK}/entrypoint \
-    &&  printf "export EM_CONFIG=${EM_CONFIG}\n"                        >> ${EMSDK}/entrypoint \
-    &&  printf "export EM_CACHE=${EM_CACHE}\n"                          >> ${EMSDK}/entrypoint \
-    &&  printf "export EM_PORTS=${EM_PORTS}\n"                          >> ${EMSDK}/entrypoint \
+    \
     # Activate Emscripten SDK
-    &&  printf '. ${EMSDK}/emsdk_env.sh > /dev/null\n'              >> ${EMSDK}/entrypoint \
+    &&  printf '. ${EMSDK}/emsdk_set_env.sh > /dev/null\n'              >> ${EMSDK}/entrypoint \
     # Evaluate a command that's coming after `docker run` / `docker exec`
     &&  printf '"$@"\n'                                                 >> ${EMSDK}/entrypoint \
     \
@@ -164,7 +171,7 @@ RUN echo "## Create transferable entrypoint" \
 
 # Populate Emscripten SDK cache with libc++, to improve further compilation times.
 RUN echo "## Pre-populate cache" \
-    &&  . ${EMSDK}/emsdk_env.sh \
+    &&  . ${EMSDK}/emsdk_set_env.sh \
     \
     &&  mkdir -p /tmp/emscripten_test \
     &&  cd /tmp/emscripten_test \
@@ -217,7 +224,7 @@ RUN echo "## Generate .pch file for DxLib" \
 # Current solution is to create symlinks that matches old solution: which maintains compatibility
 # The ultimate goal is to simplify a way to use Emscripten SDK without a need to activate it.
 RUN echo "## Create symbolic links" \
-    &&  . ${EMSDK}/emsdk_env.sh \
+    &&  . ${EMSDK}/emsdk_set_env.sh \
     \
     &&  mkdir -p ${EMSDK}/llvm ${EMSDK}/emscripten ${EMSDK}/binaryen \
     \
@@ -319,7 +326,7 @@ LABEL maintainer="kontakt@trzeci.eu" \
 # ------------------------- POST BUILD IN-PLACE TESTING ------------------------
 
 RUN echo "## Internal Testing of image (activated)" \
-    &&  . ${EMSDK}/emsdk_env.sh \
+    &&  . ${EMSDK}/emsdk_set_env.sh \
     &&  set -x \
     # binaryen
     &&  which wasm-opt \
