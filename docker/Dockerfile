@@ -124,6 +124,7 @@ RUN cd ${EMSDK} \
     &&  rm -fr **/*_32bit \
     &&  rm -rf **/.git \
     &&  rm -rf **/tests \
+    &&  rm -rf **/docs \
     &&  rm -fr zips/* \
         \
     &&  rm -fr /opt/cmake /usr/local/bin/cmake /cmake* \
@@ -137,9 +138,9 @@ RUN apt-get -qq -y update && apt-get -qq install -y --no-install-recommends \
     && . ${EMSDK}/emsdk_set_env.sh \
     # Remove debugging symbols from embedded node (extra 7MB)
     && strip -s `which node` \
-    # && strip -s `which asm2wasm` \ # extra just 1 MB, not worth to do it in favor of better bugtracking
     # strip out symbols from clang (extra 50MB!)
-    && find $(dirname $(which clang-6.0)) -type f -exec strip -s {} + &> /dev/null || true \
+    && find ${EMSDK}/upstream/bin -type f -exec strip -s {} + &> /dev/null || true \
+    && find ${EMSDK}/upstream/lib -type f -exec strip -s {} + &> /dev/null || true \
 &&  echo "## Done"
 
 # ------------------------------------------------------------------------------
