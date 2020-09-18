@@ -55,7 +55,7 @@ RUN  echo "## Get EMSDK" \
 &&  echo "## Done"
 
 
-RUN echo "## Compile Emscripten" \
+RUN echo "## Install Emscripten" \
     &&  cd ${EMSDK} \
         \
     # &&  ./emsdk install node-8.9.1-64bit > /dev/null \
