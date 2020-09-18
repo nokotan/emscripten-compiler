@@ -201,7 +201,7 @@ RUN echo "## Create symbolic links" \
     &&  echo $(which node) && ln -s $(dirname $(which node))/..       ${EMSDK}/node/current \
     &&  echo $(which clang) && ln -s $(dirname $(which clang))/..      ${EMSDK}/llvm/clang \
     &&  echo $(which emcc) && ln -s $(dirname $(which emcc))          ${EMSDK}/emscripten/sdk \
-    &&  echo $(which asm2wasm) && ln -s $(dirname $(which asm2wasm))      ${EMSDK}/binaryen/bin \
+    &&  echo $(which wasm-opt) && ln -s $(dirname $(which wasm-opt))      ${EMSDK}/binaryen/bin \
     \
     &&  echo "## Done"
 
@@ -313,7 +313,7 @@ RUN echo "## Internal Testing of image (activated)" \
     &&  . ${EMSDK}/emsdk_env.sh \
     &&  set -x \
     # binaryen
-    &&  which asm2wasm \
+    &&  which wasm-opt \
     # clang
     &&  which llvm-ar \
     # emscritpen
@@ -336,7 +336,7 @@ RUN echo "## Internal Testing of image (activated)" \
 RUN echo "## Internal Testing of image (no activation)" \
     &&  set -x \
     # binaryen
-    &&  which asm2wasm \
+    &&  which wasm-opt \
     # clang
     &&  which llvm-ar \
     # emscritpen
