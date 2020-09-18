@@ -52,8 +52,6 @@ RUN  echo "## Get EMSDK" \
     &&  git clone https://github.com/emscripten-core/emsdk.git ${EMSDK} && cd ${EMSDK} && git reset --hard ${EMSDK_CHANGESET} \
         \
     &&  ./emsdk.py update-tags \
-    # &&  releases_revision=`cat ./emscripten-releases-tags.txt | sed -n "s/.*${EMSCRIPTEN_VERSION}.*\"\(.*\)\".*/\1/p"` \
-    # &&  ( cd releases && git reset --hard ${releases_revision} ) \
 &&  echo "## Done"
 
 
@@ -64,8 +62,7 @@ RUN echo "## Compile Emscripten" \
     # Compile llvm with dynamic libs support
     # This will create local shared objects that are used on all LLVM tool.
     # It significantly reduces final size of image.
-    &&  LLVM_CMAKE_ARGS=-DLLVM_LINK_LLVM_DYLIB=ON \
-        ./emsdk install --build=MinSizeRel ${EMSCRIPTEN_SDK} \
+    &&  ./emsdk install --build=MinSizeRel ${EMSCRIPTEN_SDK} \
         \
 &&  echo "## Done"
 
@@ -101,8 +98,6 @@ RUN cd ${EMSDK} \
     &&  echo "## Clean-up Emscripten Installation" \
     # Allow to use ** for recursive wildcard - bash only!
     &&  shopt -s globstar \
-        \
-    &&  rm -fr ./upstream/fastcomp \
         \
     &&  find . -name "*.pyc" -exec rm {} \; \
     &&  find . -name "CMakeFiles" -type d -prune -exec rm -fr {} \; \
@@ -232,7 +227,6 @@ ENV EM_PORTS ${EM_DATA}/ports
 ENV PATH="${EMSDK}:${EMSDK}/emscripten/sdk:${EMSDK}/llvm/clang/bin:${EMSDK}/node/current/bin:${EMSDK}/binaryen/bin:${PATH}"
 
 ENV LANG=C.UTF-8
-# ENV PYTHONIOENCODING="'utf-8':'replace'"
 
 # Use entrypoint that's coming from emscripten-slim image. It sets all required system paths and variables
 ENTRYPOINT ["/emsdk_portable/entrypoint"]
