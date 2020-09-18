@@ -43,6 +43,8 @@ RUN echo "## Update and install packages" \
         file \
         python \
         python-pip \
+        python3 \
+        python3-pip \
 &&  echo "## Done"
 
 
