@@ -255,7 +255,7 @@ ENV EM_PORTS ${EM_DATA}/ports
 
 # Fallback in case Emscripten isn't activated
 # Expose Major tools to system PATH, so that emcc, node, asm2wasm etc can be used without activation
-ENV PATH="${EMSDK}:${EMSDK}/emscripten/sdk:${EMSDK}/llvm/clang/bin:${EMSDK}/node/current/bin:${EMSDK}/binaryen/bin:${PATH}"
+ENV PATH="${EMSDK}:${EMSDK}/upstream/bin:${EMSDK}/emscripten/sdk:${EMSDK}/llvm/clang/bin:${EMSDK}/node/current/bin:${EMSDK}/binaryen/bin:${PATH}"
 
 ENV LANG=C.UTF-8
 
