@@ -186,6 +186,29 @@ RUN echo "## Pre-populate cache" \
     \
     &&  echo "## Done"
 
+COPY include/ /include/
+
+RUN echo "## Generate .pch file for OpenSiv3D" \
+    && . ${EMSDK}/emsdk_set_env.sh \
+    && cd /include/OpenSiv3D \
+    && emcc -O0 -fPIC -fvisibility=default -std=c++17 -I/include/OpenSiv3D -I/include/OpenSiv3D/ThirdParty Siv3D.hpp -o Siv3D.O0.pch \
+    && emcc -O2 -fPIC -fvisibility=default -std=c++17 -I/include/OpenSiv3D -I/include/OpenSiv3D/ThirdParty Siv3D.hpp -o Siv3D.O2.pch \
+    && emcc -Oz -fPIC -fvisibility=default -std=c++17 -I/include/OpenSiv3D -I/include/OpenSiv3D/ThirdParty Siv3D.hpp -o Siv3D.Oz.pch \
+    \
+    # cleanup
+    &&  find ${EMSDK} -name "*.pyc" -exec rm {} \; \
+&& echo "## Done"
+
+RUN echo "## Generate .pch file for DxLib" \
+    && . ${EMSDK}/emsdk_set_env.sh \
+    && cd /include/DxLib \
+    && emcc -O0 -fPIC -fvisibility=default -std=c++17 -I/include/DxLib DxLib.h -o DxLib.O0.pch \
+    && emcc -O2 -fPIC -fvisibility=default -std=c++17 -I/include/DxLib DxLib.h -o DxLib.O2.pch \
+    && emcc -Oz -fPIC -fvisibility=default -std=c++17 -I/include/DxLib DxLib.h -o DxLib.Oz.pch \
+    \
+    # cleanup
+    &&  find ${EMSDK} -name "*.pyc" -exec rm {} \; \
+&& echo "## Done"
 
 # Create symbolic links for critical Emscripten Tools
 # This is important for letting people using Emscripten in Dockerfiles without activation
@@ -211,6 +234,7 @@ RUN echo "## Create symbolic links" \
 FROM debian:stretch-slim AS stage_deploy
 
 COPY --from=stage_build /emsdk_portable /emsdk_portable
+COPY --from=stage_build /include /include
 
 # Fallback in case Emscripten isn't activated.
 # This will let use tools offered by this image inside other Docker images (sub-stages) or with custom / no entrypoint
@@ -284,21 +308,6 @@ WORKDIR /src
 COPY Dockerfile /emsdk_portable/dockerfiles/trzeci/emscripten-slim/
 
 COPY app/ /app/
-COPY include/ /include/
-
-RUN echo "## Generate .pch file for OpenSiv3D" \
-    && cd /include/OpenSiv3D \
-    && emcc -O0 -fPIC -fvisibility=default -std=c++17 -I/include/OpenSiv3D -I/include/OpenSiv3D/ThirdParty Siv3D.hpp -o Siv3D.O0.pch \
-    && emcc -O2 -fPIC -fvisibility=default -std=c++17 -I/include/OpenSiv3D -I/include/OpenSiv3D/ThirdParty Siv3D.hpp -o Siv3D.O2.pch \
-    && emcc -Oz -fPIC -fvisibility=default -std=c++17 -I/include/OpenSiv3D -I/include/OpenSiv3D/ThirdParty Siv3D.hpp -o Siv3D.Oz.pch \
-&& echo "## Done"
-
-RUN echo "## Generate .pch file for DxLib" \
-    && cd /include/DxLib \
-    && emcc -O0 -fPIC -fvisibility=default -std=c++17 -I/include/DxLib DxLib.h -o DxLib.O0.pch \
-    && emcc -O2 -fPIC -fvisibility=default -std=c++17 -I/include/DxLib DxLib.h -o DxLib.O2.pch \
-    && emcc -Oz -fPIC -fvisibility=default -std=c++17 -I/include/DxLib DxLib.h -o DxLib.Oz.pch \
-&& echo "## Done"
 
 LABEL maintainer="kontakt@trzeci.eu" \
       org.label-schema.name="emscripten-slim" \
