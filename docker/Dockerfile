@@ -145,7 +145,7 @@ RUN apt-get -qq -y update && apt-get -qq install -y --no-install-recommends \
 # ------------------------------------------------------------------------------
 
 RUN echo "## Create transferable entrypoint" \
-    &&  printf '#!/bin/sh\n'                                            >  ${EMSDK}/entrypoint \
+    &&  printf '#!/bin/bash\n'                                            >  ${EMSDK}/entrypoint \
     # In case when mapped user id by `docker run -u` is not created inside docker image
     # The `$HOME` variable points to `/` - which prevents any tool to write to, as it requires root access
     # In such case we set `$HOME` to `/tmp` as it should r/w for everyone
@@ -325,6 +325,7 @@ LABEL maintainer="kontakt@trzeci.eu" \
 
 # ------------------------- POST BUILD IN-PLACE TESTING ------------------------
 
+SHELL ["/bin/bash", "-c"]
 RUN echo "## Internal Testing of image (activated)" \
     &&  . ${EMSDK}/emsdk_set_env.sh \
     &&  set -x \
