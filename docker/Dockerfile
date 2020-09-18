@@ -229,10 +229,10 @@ RUN echo "## Create symbolic links" \
     \
     &&  mkdir -p ${EMSDK}/llvm ${EMSDK}/emscripten ${EMSDK}/binaryen \
     \
-    &&  echo $(which node) && ln -s $(dirname $(which node))/..       ${EMSDK}/node/current \
-    &&  echo $(which clang) && ln -s $(dirname $(which clang))/..      ${EMSDK}/llvm/clang \
-    &&  echo $(which emcc) && ln -s $(dirname $(which emcc))          ${EMSDK}/emscripten/sdk \
-    &&  echo $(which wasm-opt) && ln -s $(dirname $(which wasm-opt))      ${EMSDK}/binaryen/bin \
+    &&  echo $(which node) && ln -s $(dirname $(which node))/..         ${EMSDK}/node/current \
+    &&  echo $(which clang) && ln -s $(dirname $(which clang))/..       ${EMSDK}/llvm/clang \
+    &&  echo $(which emcc) && ln -s $(dirname $(which emcc))            ${EMSDK}/emscripten/sdk \
+    &&  echo $(which wasm-opt) && ln -s $(dirname $(which wasm-opt))    ${EMSDK}/binaryen/bin \
     \
     &&  echo "## Done"
 
