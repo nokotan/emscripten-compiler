@@ -1,4 +1,5 @@
 var qs = require('querystring');
+const { deflateSync } = require("zlib");
 
 function notAllowed(res) {
   res.writeHead(503);
@@ -70,9 +71,13 @@ module.exports = function handleRequest(req, res) {
       if (err) return showError(res, err);
       require('./build')(input, (err, result) => {
         if (err) return showError(res, err);
-        res.setHeader('Content-type', 'application/json');
+        res.setHeader('Content-type', 'application/json; charset=utf-8');
+        res.setHeader('Content-Encoding', 'deflate');
         res.writeHead(200);
-        res.end(JSON.stringify(result));
+        const responseText = JSON.stringify(result);
+        const responseBuffer = Buffer.from(responseText, 'utf8');
+        const deflatedBuffer = deflateSync(responseBuffer);
+        res.end(deflatedBuffer);
       });
     });
     return;
