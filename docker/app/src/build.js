@@ -305,7 +305,7 @@ function build_project(project, base) {
       {
         name: "a.js",
         type: "text",
-        data: serialize_file_data(result_js, compress)
+        data: get_file_data(result_js, false)
       }
     ]
   }
