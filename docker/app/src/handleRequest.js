@@ -1,5 +1,5 @@
 var qs = require('querystring');
-const { deflateSync } = require("zlib");
+const { deflate } = require("zlib");
 
 function notAllowed(res) {
   res.writeHead(503);
@@ -7,6 +7,7 @@ function notAllowed(res) {
 }
 
 function showError(res, err) {
+  console.log(err.toString());
   res.writeHead(501);
   res.end(`<pre>${err.toString()}</pre>`);
 }
@@ -76,8 +77,8 @@ module.exports = function handleRequest(req, res) {
         res.writeHead(200);
         const responseText = JSON.stringify(result);
         const responseBuffer = Buffer.from(responseText, 'utf8');
-        const deflatedBuffer = deflateSync(responseBuffer);
-        res.end(deflatedBuffer);
+        
+        deflate(responseBuffer, (_, deflatedBuffer) => res.end(deflatedBuffer));
       });
     });
     return;

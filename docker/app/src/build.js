@@ -1,11 +1,12 @@
 // Translated from https://github.com/wasdk/wasmexplorer-service/blob/master/web/build.php
 // FIXME make me node.js friendly and async
 
+const { promisify } = require("util")
 const { emccDir, llvmDir, tempDir, sysroot } = require("../config");
-const { mkdirSync, writeFileSync, existsSync, openSync, closeSync, readFileSync, unlinkSync } = require("fs");
-const { deflateSync } = require("zlib");
+const { mkdirSync, writeFile, existsSync, readFile, unlinkSync } = require("fs");
+const { deflate } = require("zlib");
 const { dirname } = require("path");
-const { execSync } = require("child_process");
+const { exec } = require("child_process");
 const { Writable } = require("stream");
 
 // Input: JSON in the following format
@@ -49,18 +50,16 @@ function sanitize_shell_output(out, cwd) {
   return out.replace(generate_regexp_from_pattern(cwd), ''); // FIXME
 }
 
-function shell_exec(cmd, cwd = tempDir) {
-  const out = openSync(cwd + '/out.log', 'w');
+async function shell_exec(cmd, cwd = tempDir) {
   console.log(cmd);
+  let out;
   let error = '';
   try {
-    execSync(cmd, {cwd, stdio: [null, out, out],});
+    out = await promisify(exec)(cmd, {cwd});
   } catch (ex) {
     error = ex.message;
-  } finally {
-    closeSync(out);
   }
-  const result = readFileSync(cwd + '/out.log').toString() || error;
+  const result = (out && out.stdout) || error;
   return result;
 }
 
@@ -142,27 +141,27 @@ function get_lld_options(options) {
   return clang_flags + safe_options;
 }
 
-function serialize_file_data(filename, compress) {
-  let content = readFileSync(filename);
+async function serialize_file_data(filename, compress) {
+  let content = await promisify(readFile)(filename);
   if (compress) {
-    content = deflateSync(content);
+    content = await promisify(deflate)(content);
   }
   return content.toString("base64");
 }
 
-function get_file_data(filename, compress) {
-  let content = readFileSync(filename);
+async function get_file_data(filename, compress) {
+  let content = await promisify(readFile)(filename);
   if (compress) {
-    content = deflateSync(content);
+    content = (await promisify(deflate)(content)).buffer;
   }
   return content.toString();
 }
 
-function build_c_file(input, options, output, cwd, compress, result_obj) {
+async function build_c_file(input, options, output, cwd, compress, result_obj) {
   // const cmd = llvmDir + '/bin/clang ' + get_clang_options(options) + ' ' + input + ' -o ' + output;
   const cmd = emccDir + '/emcc ' + get_clang_options(options) + ' ' + input + ' -o ' + output;
-  const out = shell_exec(cmd, cwd);
-  result_obj.console = sanitize_shell_output(out, cwd);
+  const out = await shell_exec(cmd, cwd);
+  result_obj.console = await sanitize_shell_output(out, cwd);
   if (!existsSync(output)) {
     result_obj.success = false;
     return false;
@@ -172,11 +171,11 @@ function build_c_file(input, options, output, cwd, compress, result_obj) {
   return true;
 }
 
-function build_cpp_file(input, options, output, cwd, compress, result_obj) {
+async function build_cpp_file(input, options, output, cwd, compress, result_obj) {
   // const cmd = llvmDir + '/bin/clang++ ' + get_clang_options(options) + ' ' + input + ' -o ' + output;
   const cmd = emccDir + '/em++ ' + get_clang_options(options) + ' ' + input + ' -o ' + output;
-  const out = shell_exec(cmd, cwd);
-  result_obj.console = sanitize_shell_output(out, cwd);
+  const out = await shell_exec(cmd, cwd);
+  result_obj.console = await sanitize_shell_output(out, cwd);
   if (!existsSync(output)) {
     result_obj.success = false;
     return false;
@@ -199,7 +198,7 @@ function validate_filename(name) {
   return parts;
 }
 
-function link_obj_files(obj_files, options, cwd, has_cpp, output, result_obj) {
+async function link_obj_files(obj_files, options, cwd, has_cpp, output, result_obj) {
   const files = obj_files.join(' ');
   let clang;
   if (has_cpp) {
@@ -210,8 +209,8 @@ function link_obj_files(obj_files, options, cwd, has_cpp, output, result_obj) {
     clang = emccDir + '/emcc';    
   }
   const cmd = clang + ' ' + get_lld_options(options) + ' ' + files + ' -o ' + output;
-  const out = shell_exec(cmd, cwd);
-  result_obj.console = sanitize_shell_output(out, cwd);
+  const out = await shell_exec(cmd, cwd);
+  result_obj.console = await sanitize_shell_output(out, cwd);
   if (!existsSync(output)) {
     result_obj.success = false;
     return false;
@@ -220,7 +219,7 @@ function link_obj_files(obj_files, options, cwd, has_cpp, output, result_obj) {
   return true;
 }
 
-function build_project(project, base) {
+async function build_project(project, base, callback) {
   const output = project.output;
   const compress = project.compress;
   const build_result = { };
@@ -228,15 +227,15 @@ function build_project(project, base) {
   const result_wasm = dir + '/main.wasm';
   const result_js = dir + '/main.js';
 
-  const complete = (success, message) => {
-    shell_exec("rm -rf " + dir);
+  const complete = async (success, message) => {
+    await shell_exec("rm -rf " + dir);
     if (existsSync(result_wasm)) {
       unlinkSync(result_wasm);
     }
   
     build_result.success = success;
     build_result.message = message;
-    return build_result;
+    callback(build_result);
   };
 
   if (output != 'wasm') {
@@ -259,7 +258,7 @@ function build_project(project, base) {
       mkdirSync(dir);
     }
     const src = file.src;
-    writeFileSync(fileName, src);
+    await promisify(writeFile)(fileName, src);
   }
   const obj_files = [];
   let clang_cpp = false;
@@ -275,11 +274,11 @@ function build_project(project, base) {
     };
     build_result.tasks.push(result_obj);
     if (type == 'c') {
-      success = build_c_file(fileName, options, fileName + '.o', dir, compress, result_obj);
+      success = await build_c_file(fileName, options, fileName + '.o', dir, compress, result_obj);
       obj_files.push(fileName + '.o');
     } else if (type == 'cpp') {
       clang_cpp = true;
-      success = build_cpp_file(fileName, options, fileName + '.o', dir, compress, result_obj);
+      success = await build_cpp_file(fileName, options, fileName + '.o', dir, compress, result_obj);
       obj_files.push(fileName + '.o');
     }
     if (!success) {
@@ -291,7 +290,7 @@ function build_project(project, base) {
     name: 'linking wasm'
   };
   build_result.tasks.push(link_result_obj);
-  if (!link_obj_files(obj_files, link_options, dir, clang_cpp, result_js, link_result_obj)) {
+  if (!(await link_obj_files(obj_files, link_options, dir, clang_cpp, result_js, link_result_obj))) {
     return complete(false, 'Error during linking');
   }
   
@@ -300,12 +299,12 @@ function build_project(project, base) {
       {
         name: "a.wasm",
         type: "binary",
-        data: serialize_file_data(result_wasm, compress)
+        data: await serialize_file_data(result_wasm, compress)
       },
       {
         name: "a.js",
         type: "text",
-        data: get_file_data(result_js, false)
+        data: await get_file_data(result_js, false)
       }
     ]
   }
@@ -318,8 +317,7 @@ module.exports = (input, callback) => {
   const baseName = tempDir + '/build_' + Math.random().toString(36).slice(2);
   try {
     console.log('Building in ', baseName);
-    const result = build_project(input, baseName);
-    callback(null, result);
+    build_project(input, baseName, result => callback(null, result));
   } catch (ex) {
     callback(ex);
   }
