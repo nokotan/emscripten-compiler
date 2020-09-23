@@ -9,6 +9,11 @@ const { dirname } = require("path");
 const { exec } = require("child_process");
 const { Writable } = require("stream");
 
+const deflateAsync = promisify(deflate);
+const execAsync = promisify(exec);
+const writeFileAsync = promisify(writeFile);
+const readFileAsync = promisify(readFile);
+
 // Input: JSON in the following format
 // {
 //     output: "wasm",
@@ -55,7 +60,7 @@ async function shell_exec(cmd, cwd = tempDir) {
   let out;
   let error = '';
   try {
-    out = await promisify(exec)(cmd, {cwd});
+    out = await execAsync(cmd, {cwd});
   } catch (ex) {
     error = ex.message;
   }
@@ -142,17 +147,17 @@ function get_lld_options(options) {
 }
 
 async function serialize_file_data(filename, compress) {
-  let content = await promisify(readFile)(filename);
+  let content = await readFileAsync(filename);
   if (compress) {
-    content = await promisify(deflate)(content);
+    content = await deflateAsync(content);
   }
   return content.toString("base64");
 }
 
 async function get_file_data(filename, compress) {
-  let content = await promisify(readFile)(filename);
+  let content = await readFileAsync(filename);
   if (compress) {
-    content = (await promisify(deflate)(content)).buffer;
+    content = await deflateAsync(content);
   }
   return content.toString();
 }
@@ -258,7 +263,7 @@ async function build_project(project, base, callback) {
       mkdirSync(dir);
     }
     const src = file.src;
-    await promisify(writeFile)(fileName, src);
+    await writeFileAsync(fileName, src);
   }
   const obj_files = [];
   let clang_cpp = false;
