@@ -298,23 +298,14 @@ async function build_project(project, base, callback) {
   if (!(await link_obj_files(obj_files, link_options, dir, clang_cpp, result_js, link_result_obj))) {
     return complete(false, 'Error during linking');
   }
-  
-  const build_output = {
-    files: [
-      {
-        name: "a.wasm",
-        type: "binary",
-        data: await serialize_file_data(result_wasm, compress)
-      },
-      {
-        name: "a.js",
-        type: "text",
-        data: await get_file_data(result_js, false)
-      }
-    ]
-  }
 
-  build_result.output = JSON.stringify(build_output);
+  const [wasm, wasmBindgenJs] = await Promise.all([
+    serialize_file_data(result_wasm, compress), get_file_data(result_js, false)
+  ]);
+
+  build_result.output = wasm;
+  build_result.wasmBindgenJs = wasmBindgenJs;
+
   return complete(true, 'Success');
 }
 
