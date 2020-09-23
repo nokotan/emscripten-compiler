@@ -233,10 +233,7 @@ async function build_project(project, base, callback) {
   const result_js = dir + '/main.js';
 
   const complete = async (success, message) => {
-    await shell_exec("rm -rf " + dir);
-    if (existsSync(result_wasm)) {
-      unlinkSync(result_wasm);
-    }
+    shell_exec("rm -rf " + dir);
   
     build_result.success = success;
     build_result.message = message;
