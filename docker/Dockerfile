@@ -51,7 +51,7 @@ RUN echo "## Update and install packages" \
 RUN  echo "## Get EMSDK" \
     &&  git clone https://github.com/emscripten-core/emsdk.git ${EMSDK} && cd ${EMSDK} && git reset --hard ${EMSDK_CHANGESET} \
         \
-    &&  chmod +x ./emsdk.py
+    &&  chmod +x ./emsdk.py \
     &&  ./emsdk.py update-tags \
 &&  echo "## Done"
 
