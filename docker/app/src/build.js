@@ -75,9 +75,10 @@ function get_clang_options(options) {
     return clang_flags;
   }
   const available_options = [
-    '-O0', '-O1', '-O2', '-O3', '-Oz', '-Os', '-fno-exceptions', '-fno-rtti',
-    '-ffast-math', '-fno-inline', '-std=c99', '-std=c89', '-std=c++14',
-    '-std=c++17', '-std=c++11', '-std=c++98',
+    '-O0', '-O1', '-O2', '-O3', '-Oz', '-Os', 
+    '-fno-exceptions', '-fno-rtti', '-ffast-math', '-fno-inline', '-fcoroutine-ts',
+    '-std=c89', '-std=c99', '-std=c11', 
+    '-std=c++98', '-std=c++11', '-std=c++14', '-std=c++17', '-std=c++2a',
     '-g', '-Wall',
     '-I/include/DxLib',
     '-include-pch /include/DxLib/DxLib.O0.pch', '-include-pch /include/DxLib/DxLib.O2.pch',
@@ -121,6 +122,7 @@ function get_lld_options(options) {
   const available_options = [
     '--import-memory', '-g',
     // '-O0', '-O1', '-O2', '-O3', '-Oz', '-Os',
+    '-fcoroutines-ts',
     '-s ALLOW_MEMORY_GROWTH=1', 
     '-s DISABLE_EXCEPTION_CATCHING=0', '-s DISABLE_EXCEPTION_CATCHING=2',
     '-s SIMD=1', '-s DEMANGLE_SUPPORT=1',
