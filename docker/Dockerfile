@@ -240,7 +240,7 @@ RUN echo "## Create symbolic links" \
 # ------------------------------------------------------------------------------
 # -------------------------------- STAGE DEPLOY --------------------------------
 # ------------------------------------------------------------------------------
-FROM debian:stretch-slim AS stage_deploy
+FROM debian:buster-slim AS stage_deploy
 
 COPY --from=stage_build /emsdk_portable /emsdk_portable
 COPY --from=stage_build /include /include
