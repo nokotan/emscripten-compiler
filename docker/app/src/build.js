@@ -113,6 +113,13 @@ function get_clang_options(options) {
 }
 
 
+function check_lld_outputs(options) {
+  return {
+    hasWasm: true,
+    hasWasmBindingJS: !options.includes("-s SIDE_MODULE")
+  }
+}
+
 function get_lld_options(options) {
   // const clang_flags = `--target=wasm32-unknown-unknown-wasm --sysroot=${sysroot} -nostartfiles -Wl,--allow-undefined,--no-entry,--no-threads,--export-dynamic`;
   const clang_flags = ``;
@@ -294,16 +301,21 @@ async function build_project(project, base, callback) {
     name: 'linking wasm'
   };
   build_result.tasks.push(link_result_obj);
-  if (!(await link_obj_files(obj_files, link_options, dir, clang_cpp, result_js, link_result_obj))) {
-    return complete(false, 'Error during linking');
+
+  if (check_lld_outputs(link_options).hasWasmBindingJS) {
+    if (!(await link_obj_files(obj_files, link_options, dir, clang_cpp, result_js, link_result_obj))) {
+      return complete(false, 'Error during linking');
+    }
+  
+    build_result.output = await serialize_file_data(result_wasm, compress);
+    build_result.wasmBindgenJs = await get_file_data(result_js, false);
+  } else {
+    if (!(await link_obj_files(obj_files, link_options, dir, clang_cpp, result_wasm, link_result_obj))) {
+      return complete(false, 'Error during linking');
+    }
+
+    build_result.output = await serialize_file_data(result_wasm, compress);
   }
-
-  const [wasm, wasmBindgenJs] = await Promise.all([
-    serialize_file_data(result_wasm, compress), get_file_data(result_js, false)
-  ]);
-
-  build_result.output = wasm;
-  build_result.wasmBindgenJs = wasmBindgenJs;
 
   return complete(true, 'Success');
 }
