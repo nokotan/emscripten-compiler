@@ -19,7 +19,7 @@ FROM debian:buster AS stage_build
 # ------------------------------------------------------------------------------
 # -------------------------------- STAGE BUILD  --------------------------------
 # ------------------------------------------------------------------------------
-ARG EMSCRIPTEN_VERSION=2.0.16
+ARG EMSCRIPTEN_VERSION=2.0.17
 ARG EMSCRIPTEN_SDK=${EMSCRIPTEN_VERSION}
 ARG EMSDK_CHANGESET=master
 
