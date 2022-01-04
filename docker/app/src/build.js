@@ -156,6 +156,20 @@ function get_lld_options(options) {
   return clang_flags + safe_options;
 }
 
+function is_side_module_build(options) {
+  const available_options = [
+    '-s SIDE_MODULE=1', '-s SIDE_MODULE=2',
+  ];
+  
+  for (let o of available_options) {
+    if (options.includes(o)) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
 async function serialize_file_data(filename, compress) {
   let content = await readFileAsync(filename);
   if (compress) {
@@ -302,17 +316,30 @@ async function build_project(project, base, callback) {
     name: 'linking wasm'
   };
   build_result.tasks.push(link_result_obj);
-  if (!(await link_obj_files(obj_files, link_options, dir, clang_cpp, result_js, link_result_obj))) {
-    return complete(false, 'Error during linking');
+
+  if (is_side_module_build(link_options)) {
+    if (!(await link_obj_files(obj_files, link_options, dir, clang_cpp, result_wasm, link_result_obj))) {
+      return complete(false, 'Error during linking');
+    }
+  
+    const [wasm] = await Promise.all([
+      serialize_file_data(result_wasm, compress)
+    ]);
+  
+    build_result.output = wasm;
+  } else {
+    if (!(await link_obj_files(obj_files, link_options, dir, clang_cpp, result_js, link_result_obj))) {
+      return complete(false, 'Error during linking');
+    }
+  
+    const [wasm, wasmBindgenJs] = await Promise.all([
+      serialize_file_data(result_wasm, compress), get_file_data(result_js, false)
+    ]);
+  
+    build_result.output = wasm;
+    build_result.wasmBindgenJs = wasmBindgenJs;
   }
-
-  const [wasm, wasmBindgenJs] = await Promise.all([
-    serialize_file_data(result_wasm, compress), get_file_data(result_js, false)
-  ]);
-
-  build_result.output = wasm;
-  build_result.wasmBindgenJs = wasmBindgenJs;
-
+ 
   return complete(true, 'Success');
 }
 
