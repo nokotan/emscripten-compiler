@@ -86,12 +86,14 @@ function get_clang_options(options) {
     '-I/include/OpenSiv3D', '-I/include/OpenSiv3D/ThirdParty',
     '-include-pch /include/OpenSiv3D/Siv3D.O0.pch', '-include-pch /include/OpenSiv3D/Siv3D.O2.pch',
     '-include-pch /include/OpenSiv3D/Siv3D.Oz.pch',
+    '-include-pch /include/OpenSiv3Dv0.6/Siv3D.O0.pch', '-include-pch /include/OpenSiv3Dv0.6/Siv3D.O2.pch',
+    '-include-pch /include/OpenSiv3Dv0.6/Siv3D.Oz.pch',
     '-s ALLOW_MEMORY_GROWTH=1', 
     '-s DISABLE_EXCEPTION_CATCHING=0', '-s DISABLE_EXCEPTION_CATCHING=2',
     '-s SIMD=1', '-s DEMANGLE_SUPPORT=1',
     '-s FULL_ES2=1', '-s FULL_ES3=1', '-s USE_WEBGPU=1',
     '-s USE_GLFW=3',
-    '-s ASYNCIFY=1', '-s EXPORT_ALL=1',
+    '-s EXPORT_ALL=1',
     '-s MAIN_MODULE=1', '-s SIDE_MODULE=1', '-s STRICT_JS=1',
     '-s MAIN_MODULE=2', '-s SIDE_MODULE=2',
     '-s USE_SDL=0', '-s USE_SDL_IMAGE=0', '-s USE_SDL_TTF=0', '-s USE_SDL_NET=0',
@@ -99,7 +101,11 @@ function get_clang_options(options) {
     '-s USE_ZLIB=1', '-s USE_LIBJPEG=1', '-s USE_LIBPNG=1',
     '-s USE_BULLET=1', '-s USE_VORBIS=1', '-s USE_OGG=1', '-s USE_FREETYPE=1',
     '-s FETCH=1', '-s MINIMAL_RUNTIME=1',
-    '--use-preload-plugins', '--emrun'
+    '--use-preload-plugins', '--emrun',
+
+    '-s ASYNCIFY=1', '-s ASYNCIFY_IGNORE_INDIRECT=1',
+    '-s ASYNCIFY_IMPORTS="[ \'_ZN3s3d6System6UpdateEv\' ]"',
+    '-s ASYNCIFY_ADD="[ \'Main()\' ]"',
   ];
   let safe_options = '-c';
   for (let o of available_options) {

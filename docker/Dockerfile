@@ -19,7 +19,7 @@ FROM debian:buster AS stage_build
 # ------------------------------------------------------------------------------
 # -------------------------------- STAGE BUILD  --------------------------------
 # ------------------------------------------------------------------------------
-ARG EMSCRIPTEN_VERSION=2.0.21
+ARG EMSCRIPTEN_VERSION=2.0.22
 ARG EMSCRIPTEN_SDK=${EMSCRIPTEN_VERSION}
 ARG EMSDK_CHANGESET=main
 
@@ -200,9 +200,9 @@ COPY include/ /include/
 RUN echo "## Generate .pch file for OpenSiv3D v0.4" \
     && . ${EMSDK}/emsdk_set_env.sh \
     && cd /include/OpenSiv3D \
-    && emcc -O0 -fPIC -fvisibility=default -std=c++17 -I/include/OpenSiv3D -I/include/OpenSiv3D/ThirdParty Siv3D.hpp -o Siv3D.v4.O0.pch \
-    && emcc -O2 -fPIC -fvisibility=default -std=c++17 -I/include/OpenSiv3D -I/include/OpenSiv3D/ThirdParty Siv3D.hpp -o Siv3D.v4.O2.pch \
-    && emcc -Oz -fPIC -fvisibility=default -std=c++17 -I/include/OpenSiv3D -I/include/OpenSiv3D/ThirdParty Siv3D.hpp -o Siv3D.v4.Oz.pch \
+    && emcc -O0 -fPIC -fvisibility=default -std=c++17 -I/include/OpenSiv3D -I/include/OpenSiv3D/ThirdParty Siv3D.hpp -o Siv3D.O0.pch \
+    && emcc -O2 -fPIC -fvisibility=default -std=c++17 -I/include/OpenSiv3D -I/include/OpenSiv3D/ThirdParty Siv3D.hpp -o Siv3D.O2.pch \
+    && emcc -Oz -fPIC -fvisibility=default -std=c++17 -I/include/OpenSiv3D -I/include/OpenSiv3D/ThirdParty Siv3D.hpp -o Siv3D.Oz.pch \
     \
     # cleanup
     &&  find ${EMSDK} -name "*.pyc" -exec rm {} \; \
@@ -210,7 +210,7 @@ RUN echo "## Generate .pch file for OpenSiv3D v0.4" \
 
 RUN echo "## Generate .pch file for OpenSiv3D v0.6" \
     && . ${EMSDK}/emsdk_set_env.sh \
-    && cd /include/OpenSiv3D \
+    && cd /include/OpenSiv3Dv0.6 \
     && emcc -O0 -fPIC -fvisibility=default -std=c++2a -I/include/OpenSiv3Dv0.6 -I/include/OpenSiv3Dv0.6/ThirdParty Siv3D.hpp -o Siv3D.O0.pch \
     && emcc -O2 -fPIC -fvisibility=default -std=c++2a -I/include/OpenSiv3Dv0.6 -I/include/OpenSiv3Dv0.6/ThirdParty Siv3D.hpp -o Siv3D.O2.pch \
     && emcc -Oz -fPIC -fvisibility=default -std=c++2a -I/include/OpenSiv3Dv0.6 -I/include/OpenSiv3Dv0.6/ThirdParty Siv3D.hpp -o Siv3D.Oz.pch \
