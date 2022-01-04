@@ -106,6 +106,7 @@ function get_clang_options(options) {
     '-s ASYNCIFY=1', '-s ASYNCIFY_IGNORE_INDIRECT=1',
     '-s ASYNCIFY_IMPORTS="[ \'_ZN3s3d6System6UpdateEv\' ]"',
     '-s ASYNCIFY_ADD="[ \'Main()\' ]"',
+    '-D_XM_NO_INTRINSICS_',
   ];
   let safe_options = '-c';
   for (let o of available_options) {
