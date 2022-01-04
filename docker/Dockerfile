@@ -21,7 +21,7 @@ FROM debian:buster AS stage_build
 # ------------------------------------------------------------------------------
 ARG EMSCRIPTEN_VERSION=2.0.21
 ARG EMSCRIPTEN_SDK=${EMSCRIPTEN_VERSION}
-ARG EMSDK_CHANGESET=master
+ARG EMSDK_CHANGESET=main
 
 # ------------------------------------------------------------------------------
 # Following variables are important to tell Emscripten to use pre-defined locations
