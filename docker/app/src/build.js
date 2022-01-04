@@ -86,6 +86,7 @@ function get_clang_options(options) {
     '-I/include/OpenSiv3D', '-I/include/OpenSiv3D/ThirdParty',
     '-include-pch /include/OpenSiv3D/Siv3D.O0.pch', '-include-pch /include/OpenSiv3D/Siv3D.O2.pch',
     '-include-pch /include/OpenSiv3D/Siv3D.Oz.pch',
+    '-I/include/OpenSiv3Dv0.6', '-I/include/OpenSiv3Dv0.6/ThirdParty',
     '-include-pch /include/OpenSiv3Dv0.6/Siv3D.O0.pch', '-include-pch /include/OpenSiv3Dv0.6/Siv3D.O2.pch',
     '-include-pch /include/OpenSiv3Dv0.6/Siv3D.Oz.pch',
     '-s ALLOW_MEMORY_GROWTH=1', 
