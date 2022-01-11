@@ -16,17 +16,24 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build
+      - name: Build Compiler (Latest)
         if: ${{ !contains(github.ref, 'tags/') }}
         uses: docker/build-push-action@v2
         with:
-          push: true
+          push: ${{ !contains(github.ref_name, 'master') }}
           tags: nokotan/emscripten-compiler:latest
 
-      - name: Build and push
+      - name: Build Compiler (Tagged)
         if: ${{ contains(github.ref, 'tags/') }}
         uses: docker/build-push-action@v2
         with:
           push: true
           context: .
           tags: nokotan/emscripten-compiler:${{ github.ref_name }}
+
+      - name: Build App
+        uses: docker/build-push-action@v2
+        with:
+          push: false
+          context: ./docker/
+          tags: nokotan/emscripten-compiler-slug:latest
