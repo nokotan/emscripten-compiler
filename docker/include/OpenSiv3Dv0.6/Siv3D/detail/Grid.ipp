@@ -2,8 +2,8 @@
 //
 //	This file is part of the Siv3D Engine.
 //
-//	Copyright (c) 2008-2021 Ryo Suzuki
-//	Copyright (c) 2016-2021 OpenSiv3D Project
+//	Copyright (c) 2008-2022 Ryo Suzuki
+//	Copyright (c) 2016-2022 OpenSiv3D Project
 //
 //	Licensed under the MIT License.
 //
@@ -692,28 +692,28 @@ namespace s3d
 	SIV3D_CONCEPT_URBG_
 	inline typename Grid<Type, Allocator>::value_type& Grid<Type, Allocator>::choice(URBG&& rbg)
 	{
-		if (empty())
+		const size_t size = m_data.size();
+
+		if (size == 0)
 		{
-			throw std::out_of_range("Grid::choice(): Grid is empty");
+			throw std::out_of_range{ "Grid::choice(): Grid is empty" };
 		}
 
-		const size_t index = UniformIntDistribution<size_t>(0, size() - 1)(rbg);
-
-		return operator[](index);
+		return m_data[RandomClosedOpen<size_t>(0, size, std::forward<URBG>(rbg))];
 	}
 
 	template <class Type, class Allocator>
 	SIV3D_CONCEPT_URBG_
 	inline const typename Grid<Type, Allocator>::value_type& Grid<Type, Allocator>::choice(URBG&& rbg) const
 	{
-		if (empty())
+		const size_t size = m_data.size();
+
+		if (size == 0)
 		{
-			throw std::out_of_range("Grid::choice(): Grid is empty");
+			throw std::out_of_range{ "Grid::choice(): Grid is empty" };
 		}
 
-		const size_t index = UniformIntDistribution<size_t>(0, size() - 1)(rbg);
-
-		return operator[](index);
+		return m_data[RandomClosedOpen<size_t>(0, size, std::forward<URBG>(rbg))];
 	}
 
 	template <class Type, class Allocator>

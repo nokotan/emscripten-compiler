@@ -2,8 +2,8 @@
 //
 //	This file is part of the Siv3D Engine.
 //
-//	Copyright (c) 2008-2021 Ryo Suzuki
-//	Copyright (c) 2016-2021 OpenSiv3D Project
+//	Copyright (c) 2008-2022 Ryo Suzuki
+//	Copyright (c) 2016-2022 OpenSiv3D Project
 //
 //	Licensed under the MIT License.
 //
@@ -94,10 +94,10 @@ namespace s3d
 		String entryPoint;
 
 		SIV3D_NODISCARD_CXX20
-		explicit MSL(StringView _entryPoint);
+		explicit MSL(String _entryPoint);
 
 		SIV3D_NODISCARD_CXX20
-		MSL(FilePath _path, StringView _entryPoint);
+		MSL(FilePath _path, String _entryPoint);
 
 		[[nodiscard]]
 		ShaderGroup operator |(const HLSL& hlsl) const;

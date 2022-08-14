@@ -2,8 +2,8 @@
 //
 //	This file is part of the Siv3D Engine.
 //
-//	Copyright (c) 2008-2021 Ryo Suzuki
-//	Copyright (c) 2016-2021 OpenSiv3D Project
+//	Copyright (c) 2008-2022 Ryo Suzuki
+//	Copyright (c) 2016-2022 OpenSiv3D Project
 //
 //	Licensed under the MIT License.
 //
@@ -170,6 +170,9 @@
 
 // kd 木 | kd-tree
 # include <Siv3D/KDTree.hpp>
+
+// Disjoint-set (Union-find) | Disjoint-set (Union–find)
+# include <Siv3D/DisjointSet.hpp>
 
 //////////////////////////////////////////////////
 //
@@ -1269,6 +1272,9 @@
 
 // 音声のグローバル設定 | Global audio setting
 # include <Siv3D/GlobalAudio.hpp>
+
+// オーディオストリームのインタフェース | Audio stream interface
+# include <Siv3D/IAudioStream.hpp>
 
 // 音声 | Audio
 # include <Siv3D/Audio.hpp>

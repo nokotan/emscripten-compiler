@@ -2,8 +2,8 @@
 //
 //	This file is part of the Siv3D Engine.
 //
-//	Copyright (c) 2008-2021 Ryo Suzuki
-//	Copyright (c) 2016-2021 OpenSiv3D Project
+//	Copyright (c) 2008-2022 Ryo Suzuki
+//	Copyright (c) 2016-2022 OpenSiv3D Project
 //
 //	Licensed under the MIT License.
 //
@@ -58,6 +58,9 @@ namespace s3d
 		/// @return オープンに成功した場合 true, それ以外の場合は false
 		bool LaunchBrowser(FilePathView url);
 
+		/// @brief ファイルパスをファイルマネージャー上で表示します。
+		/// @param path ファイルパス
+		/// @return ファイルマネージャー上での表示に成功した場合 true, それ以外の場合は false
 		bool ShowInFileManager(FilePathView path);
 
 		/// @brief レンダラーの設定を返します。

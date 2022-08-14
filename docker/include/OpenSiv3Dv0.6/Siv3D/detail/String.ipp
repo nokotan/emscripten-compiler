@@ -2,8 +2,8 @@
 //
 //	This file is part of the Siv3D Engine.
 //
-//	Copyright (c) 2008-2021 Ryo Suzuki
-//	Copyright (c) 2016-2021 OpenSiv3D Project
+//	Copyright (c) 2008-2022 Ryo Suzuki
+//	Copyright (c) 2016-2022 OpenSiv3D Project
 //
 //	Licensed under the MIT License.
 //
@@ -1121,6 +1121,58 @@ namespace s3d
 	inline String& String::replace(const StringView oldStr, const StringView newStr)
 	{
 		return *this = replaced(oldStr, newStr);
+	}
+
+	inline String& String::replace(const size_type pos, const size_type count, const String& s)
+	{
+		m_string.replace(pos, count, s.m_string);
+
+		return *this;
+	}
+
+	inline String& String::replace(const size_type pos, const size_type count, const value_type* s)
+	{
+		m_string.replace(pos, count, s);
+
+		return *this;
+	}
+
+	template <class StringViewIsh, class>
+	inline String& String::replace(const size_type pos, const size_type count, const StringViewIsh& s)
+	{
+		m_string.replace(pos, count, s);
+
+		return *this;
+	}
+
+	inline String& String::replace(const_iterator first, const_iterator last, const String& s)
+	{
+		m_string.replace(first, last, s.m_string);
+
+		return *this;
+	}
+
+	inline String& String::replace(const_iterator first, const_iterator last, const value_type* s)
+	{
+		m_string.replace(first, last, s);
+
+		return *this;
+	}
+
+	template <class StringViewIsh, class>
+	inline String& String::replace(const_iterator first, const_iterator last, const StringViewIsh& s)
+	{
+		m_string.replace(first, last, s);
+
+		return *this;
+	}
+
+	template <class Iterator>
+	inline String& String::replace(const_iterator first, const_iterator last, Iterator first2, Iterator last2)
+	{
+		m_string.replace(first, last, first2, last2);
+
+		return *this;
 	}
 
 	inline String String::replaced(const value_type oldChar, const value_type newChar) const&

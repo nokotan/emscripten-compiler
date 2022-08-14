@@ -2,8 +2,8 @@
 //
 //	This file is part of the Siv3D Engine.
 //
-//	Copyright (c) 2008-2021 Ryo Suzuki
-//	Copyright (c) 2016-2021 OpenSiv3D Project
+//	Copyright (c) 2008-2022 Ryo Suzuki
+//	Copyright (c) 2016-2022 OpenSiv3D Project
 //
 //	Licensed under the MIT License.
 //
@@ -72,7 +72,7 @@ namespace s3d
 
 		/// @brief データを追加します。
 		/// @param code 変換用の UTF-32 データ
-		/// @return `get()` で文字を取得可能になった場合 true, それ以外の場合は false
+		/// @return 作成された UTF-8 データのサイズ
 		[[nodiscard]]
 		size_t put(char32 code) noexcept;
 

@@ -2,8 +2,8 @@
 //
 //	This file is part of the Siv3D Engine.
 //
-//	Copyright (c) 2008-2021 Ryo Suzuki
-//	Copyright (c) 2016-2021 OpenSiv3D Project
+//	Copyright (c) 2008-2022 Ryo Suzuki
+//	Copyright (c) 2016-2022 OpenSiv3D Project
 //
 //	Licensed under the MIT License.
 //
@@ -19,6 +19,7 @@
 # include "String.hpp"
 # include "Duration.hpp"
 # include "FormatData.hpp"
+# include "FormatLiteral.hpp"
 
 namespace s3d
 {
@@ -277,6 +278,34 @@ namespace s3d
 	String FormatDate(const Date& date, StringView format = U"yyyy-MM-dd"_sv);
 }
 
+template <>
+struct SIV3D_HIDDEN fmt::formatter<s3d::Date, s3d::char32>
+{
+	std::u32string tag;
+
+	auto parse(basic_format_parse_context<s3d::char32>& ctx)
+	{
+		return s3d::detail::GetFormatTag(tag, ctx);
+	}
+
+	template <class FormatContext>
+	auto format(const s3d::Date& value, FormatContext& ctx)
+	{
+		const s3d::String dateTime = value.format();
+		const basic_string_view<s3d::char32> sv(dateTime.data(), dateTime.size());
+
+		if (tag.empty())
+		{
+			return format_to(ctx.out(), sv);
+		}
+		else
+		{
+			const std::u32string format = (U"{:" + tag + U'}');
+			return format_to(ctx.out(), format, sv);
+		}
+	}
+};
+
 //////////////////////////////////////////////////
 //
 //	Hash
@@ -287,7 +316,7 @@ template <>
 struct std::hash<s3d::Date>
 {
 	[[nodiscard]]
-	size_t operator()(const s3d::Date& value) const noexcept
+	size_t operator ()(const s3d::Date& value) const noexcept
 	{
 		return value.hash();
 	}

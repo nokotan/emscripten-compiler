@@ -2,8 +2,8 @@
 //
 //	This file is part of the Siv3D Engine.
 //
-//	Copyright (c) 2008-2021 Ryo Suzuki
-//	Copyright (c) 2016-2021 OpenSiv3D Project
+//	Copyright (c) 2008-2022 Ryo Suzuki
+//	Copyright (c) 2016-2022 OpenSiv3D Project
 //
 //	Licensed under the MIT License.
 //
@@ -13,6 +13,7 @@
 # include "Common.hpp"
 # include "Stopwatch.hpp"
 # include "String.hpp"
+# include "AsyncTask.hpp"
 
 namespace s3d
 {
@@ -24,11 +25,17 @@ namespace s3d
 
 		bool active = false;
 
+		bool textChanged = false;
+
+		bool tabKey = false;
+
+		bool enterKey = false;
+
 		Stopwatch leftPressStopwatch, rightPressStopwatch, cursorStopwatch;
 
 	# if SIV3D_PLATFORM(WEB)
 
-		std::future<String> pendingClipboardText;
+		AsyncTask<String> pendingClipboardText;
 
 	# endif
 

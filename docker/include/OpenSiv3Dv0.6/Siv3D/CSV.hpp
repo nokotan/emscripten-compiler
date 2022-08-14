@@ -2,8 +2,8 @@
 //
 //	This file is part of the Siv3D Engine.
 //
-//	Copyright (c) 2008-2021 Ryo Suzuki
-//	Copyright (c) 2016-2021 OpenSiv3D Project
+//	Copyright (c) 2008-2022 Ryo Suzuki
+//	Copyright (c) 2016-2022 OpenSiv3D Project
 //
 //	Licensed under the MIT License.
 //
@@ -52,20 +52,42 @@ namespace s3d
 		[[nodiscard]]
 		explicit operator bool() const noexcept;
 
+		/// @brief 行数を返します。
+		/// @return 行数
 		[[nodiscard]]
 		size_t rows() const noexcept;
 
+		/// @brief 指定した行の列数を返します。
+		/// @param row 行
+		/// @return 指定した行の列数
 		[[nodiscard]]
 		size_t columns(size_t row) const noexcept;
 
+		/// @brief 指定した位置の値を読み取ります。
+		/// @tparam Type 読み取る値の型
+		/// @param row 行
+		/// @param column 列
+		/// @return 読み取った値
 		template <class Type = String>
 		[[nodiscard]]
 		Type get(size_t row, size_t column) const;
 
+		/// @brief 指定した位置の値を読み取ります。失敗した場合は defaultValue を返します。
+		/// @tparam Type 読み取る値の型
+		/// @tparam U デフォルトの値の型
+		/// @param row 行
+		/// @param column 列
+		/// @param defaultValue デフォルトの値
+		/// @return 読み取った値。失敗した場合はデフォルトの値
 		template <class Type, class U>
 		[[nodiscard]]
 		Type getOr(size_t row, size_t column, U&& defaultValue) const;
 
+		/// @brief 指定した位置の値を読み取ります。失敗した場合は none を返します。
+		/// @tparam Type 読み取る値の型
+		/// @param row 行
+		/// @param column 列
+		/// @return 読み取った値。失敗した場合は none
 		template <class Type>
 		[[nodiscard]]
 		Optional<Type> getOpt(size_t row, size_t column) const;
@@ -101,6 +123,12 @@ namespace s3d
 
 		void newLine();
 
+		/// @brief CSV データをファイルに保存します。
+		/// @param path ファイルパス
+		/// @param separator 要素のセパレータ
+		/// @param quote クオーテーション記号
+		/// @param escape エスケープ記号
+		/// @return 保存に成功した場合 true, それ以外の場合は false
 		bool save(FilePathView path, char32 separator = U',', char32 quote = U'\"', char32 escape = U'\\') const;
 
 	private:

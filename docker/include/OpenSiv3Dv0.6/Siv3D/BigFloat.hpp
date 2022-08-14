@@ -2,8 +2,8 @@
 //
 //	This file is part of the Siv3D Engine.
 //
-//	Copyright (c) 2008-2021 Ryo Suzuki
-//	Copyright (c) 2016-2021 OpenSiv3D Project
+//	Copyright (c) 2008-2022 Ryo Suzuki
+//	Copyright (c) 2016-2022 OpenSiv3D Project
 //
 //	Licensed under the MIT License.
 //
@@ -262,7 +262,7 @@ namespace s3d
 		[[nodiscard]]
 		friend inline BigFloat operator -(Arithmetic a, const BigFloat& b)
 		{
-			return (-b + a);
+			return -(b - a);
 		}
 
 		//////////////////////////////////////////////////
@@ -491,7 +491,7 @@ namespace s3d
 		[[nodiscard]]
 		friend inline bool operator !=(const BigFloat& a, const Arithmetic b)
 		{
-			return (a.compare(b) == 0);
+			return (a.compare(b) != 0);
 		}
 
 		SIV3D_CONCEPT_ARITHMETIC
@@ -838,7 +838,7 @@ template <>
 struct std::hash<s3d::BigFloat>
 {
 	[[nodiscard]]
-	size_t operator()(const s3d::BigFloat& value) const noexcept
+	size_t operator ()(const s3d::BigFloat& value) const noexcept
 	{
 		return value.hash();
 	}

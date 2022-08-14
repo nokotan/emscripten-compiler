@@ -2,8 +2,8 @@
 //
 //	This file is part of the Siv3D Engine.
 //
-//	Copyright (c) 2008-2021 Ryo Suzuki
-//	Copyright (c) 2016-2021 OpenSiv3D Project
+//	Copyright (c) 2008-2022 Ryo Suzuki
+//	Copyright (c) 2016-2022 OpenSiv3D Project
 //
 //	Licensed under the MIT License.
 //
@@ -14,6 +14,7 @@
 # include "String.hpp"
 # include "Array.hpp"
 # include "Image.hpp"
+# include "AsyncTask.hpp"
 
 namespace s3d
 {
@@ -55,7 +56,7 @@ namespace s3d
 # if SIV3D_PLATFORM(WEB)
 	namespace Platform::Web::Clipboard 
 	{
-		std::future<String> GetText();
+		AsyncTask<String> GetText();
 	}
 # endif
 }

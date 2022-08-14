@@ -2,8 +2,8 @@
 //
 //	This file is part of the Siv3D Engine.
 //
-//	Copyright (c) 2008-2021 Ryo Suzuki
-//	Copyright (c) 2016-2021 OpenSiv3D Project
+//	Copyright (c) 2008-2022 Ryo Suzuki
+//	Copyright (c) 2016-2022 OpenSiv3D Project
 //
 //	Licensed under the MIT License.
 //
@@ -67,9 +67,11 @@ namespace s3d
 			struct
 			{
 				/// @brief 長方形の幅
+				/// @remark この値が負の時の挙動は未規定です。
 				value_type w;
 
 				/// @brief 長方形の高さ
+				/// @remark この値が負の時の挙動は未規定です。
 				value_type h;
 			};
 		};
@@ -470,14 +472,28 @@ namespace s3d
 
 		constexpr Rect& set(Arg::leftCenter_<position_type> leftCenter, size_type _size) noexcept;
 
+		/// @brief 座標を移動した新しい長方形を返します。
+		/// @param _x X 軸方向の移動量
+		/// @param _y Y 軸方向の移動量
+		/// @return 新しい長方形
 		[[nodiscard]]
 		constexpr Rect movedBy(value_type _x, value_type _y) const noexcept;
 
+		/// @brief 座標を移動した新しい長方形を返します。
+		/// @param v 移動量
+		/// @return 新しい長方形
 		[[nodiscard]]
 		constexpr Rect movedBy(size_type v) const noexcept;
 
+		/// @brief 長方形を移動させます。
+		/// @param _x X 軸方向の移動量
+		/// @param _y Y 軸方向の移動量
+		/// @return *this
 		constexpr Rect& moveBy(value_type _x, value_type _y) noexcept;
 
+		/// @brief 長方形を移動させます。
+		/// @param v 移動量
+		/// @return *this
 		constexpr Rect& moveBy(size_type v) noexcept;
 
 		[[nodiscard]]
@@ -514,6 +530,36 @@ namespace s3d
 		/// @return 長方形が大きさを持っている場合 true, それ以外の場合は false
 		[[nodiscard]]
 		constexpr bool hasArea() const noexcept;
+
+		/// @brief 長方形の左辺の X 座標を返します。
+		/// @return 長方形の左辺の X 座標
+		[[nodiscard]]
+		constexpr value_type leftX() const noexcept;
+
+		/// @brief 長方形の右辺の X 座標を返します。
+		/// @return 長方形の右辺の X 座標
+		[[nodiscard]]
+		constexpr value_type rightX() const noexcept;
+
+		/// @brief 長方形の上辺の Y 座標を返します。
+		/// @return 長方形の上辺の Y 座標
+		[[nodiscard]]
+		constexpr value_type topY() const noexcept;
+
+		/// @brief 長方形の下辺の Y 座標を返します。
+		/// @return 長方形の下辺の Y 座標
+		[[nodiscard]]
+		constexpr value_type bottomY() const noexcept;
+
+		/// @brief 長方形の中心の X 座標を返します。
+		/// @return 長方形の中心の X 座標
+		[[nodiscard]]
+		constexpr double centerX() const noexcept;
+
+		/// @brief 長方形の中心の Y 座標を返します。
+		/// @return 長方形の中心の Y 座標
+		[[nodiscard]]
+		constexpr double centerY() const noexcept;
 
 		/// @brief 長方形の左上の座標を返します。
 		/// @return 長方形の左上の座標
@@ -560,6 +606,13 @@ namespace s3d
 		[[nodiscard]]
 		constexpr Vec2 center() const noexcept;
 
+		/// @brief 長方形の左上を (0 ,0), 右下を (1, 1) としたときの (relativeX, relativeY) の座標を返します。
+		/// @param relativeX X 座標の相対的な位置
+		/// @param relativeY Y 座標の相対的な位置
+		/// @return 長方形の左上を (0 ,0), 右下を (1, 1) としたときの (relativeX, relativeY) の座標
+		[[nodiscard]]
+		constexpr Vec2 getRelativePoint(double relativeX, double relativeY) const noexcept;
+
 		/// @brief 長方形の上辺を Line として返します。
 		/// @return 長方形の上辺
 		[[nodiscard]]
@@ -598,6 +651,10 @@ namespace s3d
 		/// @return 長方形の周の長さ
 		[[nodiscard]]
 		constexpr value_type perimeter() const noexcept;
+
+		template <class Type = double>
+		[[nodiscard]]
+		constexpr Type horizontalAspectRatio() const noexcept;
 
 		[[nodiscard]]
 		Quad rotated(double angle) const noexcept;
@@ -774,6 +831,10 @@ namespace s3d
 		[[nodiscard]]
 		TexturedQuad operator ()(const TextureRegion& textureRegion) const;
 
+		/// @brief 対角線上の 2 点の座標をもとに長方形を作成します。
+		/// @param a 対角線をなす座標の 1 つ
+		/// @param b 対角線をなす座標の 1 つ
+		/// @return 作成した長方形
 		[[nodiscard]]
 		static constexpr Rect FromPoints(position_type a, position_type b) noexcept;
 
@@ -832,7 +893,7 @@ template <>
 struct std::hash<s3d::Rect>
 {
 	[[nodiscard]]
-	size_t operator()(const s3d::Rect& value) const noexcept
+	size_t operator ()(const s3d::Rect& value) const noexcept
 	{
 		return value.hash();
 	}

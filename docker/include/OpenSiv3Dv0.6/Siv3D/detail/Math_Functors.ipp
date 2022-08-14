@@ -2,8 +2,8 @@
 //
 //	This file is part of the Siv3D Engine.
 //
-//	Copyright (c) 2008-2021 Ryo Suzuki
-//	Copyright (c) 2016-2021 OpenSiv3D Project
+//	Copyright (c) 2008-2022 Ryo Suzuki
+//	Copyright (c) 2016-2022 OpenSiv3D Project
 //
 //	Licensed under the MIT License.
 //
@@ -984,6 +984,56 @@ namespace s3d
 	}
 
 	constexpr auto Tanh = detail::Tanh_impl{};
+
+	//////////////////////////////////////////////////
+	//
+	//	Dot
+	//
+	//////////////////////////////////////////////////
+
+	struct Dot_impl
+	{
+		template <class V1, class V2>
+		[[nodiscard]]
+		constexpr auto operator()(const V1 v1, const V2 v2) const noexcept
+		{
+			return Math::Dot(v1, v2);
+		}
+
+		template <class Type = void>
+		[[nodiscard]]
+		constexpr auto operator ()(PlaceHolder_t) const noexcept
+		{
+			return *this;
+		}
+	};
+
+	constexpr auto Dot = Dot_impl{};
+
+	//////////////////////////////////////////////////
+	//
+	//	Cross
+	//
+	//////////////////////////////////////////////////
+
+	struct Cross_impl
+	{
+		template <class V1, class V2>
+		[[nodiscard]]
+		constexpr auto operator()(const V1 v1, const V2 v2) const noexcept
+		{
+			return Math::Cross(v1, v2);
+		}
+
+		template <class Type = void>
+		[[nodiscard]]
+		constexpr auto operator ()(PlaceHolder_t) const noexcept
+		{
+			return *this;
+		}
+	};
+
+	constexpr auto Cross = Cross_impl{};
 
 	//////////////////////////////////////////////////
 	//

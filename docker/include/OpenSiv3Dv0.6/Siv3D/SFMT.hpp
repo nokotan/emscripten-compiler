@@ -2,8 +2,8 @@
 //
 //	This file is part of the Siv3D Engine.
 //
-//	Copyright (c) 2008-2021 Ryo Suzuki
-//	Copyright (c) 2016-2021 OpenSiv3D Project
+//	Copyright (c) 2008-2022 Ryo Suzuki
+//	Copyright (c) 2016-2022 OpenSiv3D Project
 //
 //	Licensed under the MIT License.
 //
@@ -12,7 +12,7 @@
 # pragma once
 # include <cassert>
 # include <ThirdParty/Xoshiro-cpp/XoshiroCpp.hpp>
-# include <ThirdParty/SMFT/SMFT.hpp>
+# include <ThirdParty/SFMT/SFMT.hpp>
 # include "Common.hpp"
 # include "Number.hpp"
 # include "HardwareRNG.hpp"
@@ -64,11 +64,11 @@ namespace s3d
 
 			/// @brief 乱数を生成します。 | Generates a pseudo-random value.
 			/// @return 生成された乱数 | A generated pseudo-random value
-			result_type operator()() noexcept;
+			result_type operator ()() noexcept;
 
-			[[nodiscard]]
 			/// @brief [0, 1) の範囲の乱数を生成します。 | Generates a pseudo-random value in [0, 1)
 			/// @return 生成された乱数 | A generated pseudo-random value
+			[[nodiscard]]
 			double generateReal() noexcept;
 
 			[[nodiscard]]
@@ -83,4 +83,4 @@ namespace s3d
 	}
 }
 
-# include "detail/SMFT.ipp"
+# include "detail/SFMT.ipp"
