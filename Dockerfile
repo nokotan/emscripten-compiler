@@ -1,3 +1,7 @@
+# Copyright (c) 2021 kamenokonokotan
+# Copyright (c) 2017 Piotr Paczkowski
+# Licensed under the MIT license
+
 FROM debian:buster AS stage_build
 
 # ------------------------------ ABOUT THIS IMAGE  -----------------------------
