@@ -145,7 +145,12 @@ function get_lld_options(options) {
     '-s USE_BULLET=1', '-s USE_VORBIS=1', '-s USE_OGG=1', '-s USE_FREETYPE=1',
     '-s FETCH=1', '-s MINIMAL_RUNTIME=1',
     '-s FORCE_FILESYSTEM=1',
-    '--use-preload-plugins', '--emrun'
+    '--use-preload-plugins', '--emrun',
+
+    '-s ASYNCIFY=1', '-s ASYNCIFY_IGNORE_INDIRECT=1',
+    '-s ASYNCIFY_IMPORTS="[ \'_ZN3s3d6System6UpdateEv\' ]"',
+    '-s ASYNCIFY_ADD="[ \'Main()\' ]"',
+    '-D_XM_NO_INTRINSICS_',
   ];
   let safe_options = '';
   for (let o of available_options) {
