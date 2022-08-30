@@ -1,4 +1,4 @@
-FROM nokotan/emscripten-compiler:3.1.8
+FROM nokotan/emscripten-compiler:3.1.20
 
 COPY include/ /include/
 
