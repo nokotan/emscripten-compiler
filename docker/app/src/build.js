@@ -77,6 +77,7 @@ function get_clang_options(options) {
   const available_options = [
     '-O0', '-O1', '-O2', '-O3', '-Oz', '-Os', 
     '-fno-exceptions', '-fno-rtti', '-ffast-math', '-fno-inline', '-fcoroutine-ts',
+    '-mreference-types',
     '-std=c89', '-std=c99', '-std=c11', 
     '-std=c++98', '-std=c++11', '-std=c++14', '-std=c++17', '-std=c++2a',
     '-g', '-Wall',
@@ -104,9 +105,6 @@ function get_clang_options(options) {
     '-s FETCH=1', '-s MINIMAL_RUNTIME=1',
     '--use-preload-plugins', '--emrun',
 
-    '-s ASYNCIFY=1', '-s ASYNCIFY_IGNORE_INDIRECT=1',
-    '-s ASYNCIFY_IMPORTS="[ \'_ZN3s3d6System6UpdateEv\' ]"',
-    '-s ASYNCIFY_ADD="[ \'Main()\' ]"',
     '-D_XM_NO_INTRINSICS_',
   ];
   let safe_options = '-c';
@@ -149,6 +147,7 @@ function get_lld_options(options) {
 
     '-s ASYNCIFY=1', '-s ASYNCIFY_IGNORE_INDIRECT=1',
     '-s ASYNCIFY_IMPORTS="[ \'_ZN3s3d6System6UpdateEv\' ]"',
+    '-s ASYNCIFY_IMPORTS="[ \'_ZN3s3d6System6UpdateEv\', \'_ZN3s3d7TextureC1ENS_10StringViewENS_11TextureDescE\', \'_ZN3s3d5ImageC1ENS_10StringViewENS_11ImageFormatE\', \'_ZN3s3d5AudioC1ENS_10StringViewE\', \'_ZN3s3d5AudioC1ENS_10StringViewENS_5YesNoINS_8Loop_tagEEE\' ]"',
     '-s ASYNCIFY_ADD="[ \'Main()\' ]"',
     '-D_XM_NO_INTRINSICS_',
   ];

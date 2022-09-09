@@ -1,5 +1,5 @@
 const endpoint = "https://emscripten-compiler.herokuapp.com/build";
-import { assert, Console } from "console";
+
 import * as fetch from "node-fetch";
 
 async function sendJson(content) {
@@ -148,7 +148,7 @@ async function episode() {
     times.push(elapsedTime);
     console.log(`took ${elapsedTime}`);
 
-    assert(result.success);
+    console.assert(result.success);
 }
 
 async function main() {
@@ -157,11 +157,15 @@ async function main() {
     const loopTrial = testDuration / interval;
 
     let totalTrial = 0;
-    const generator = new PoissonDistributionRandom(3 / 100, 5);
+    const generator = new PoissonDistributionRandom(3 / (testDuration / interval), 3);
     const taskPromises = [];
 
     for (let i = 0; i < loopTrial; i++) {
         const trialNum = generator.get();
+
+        if (trialNum > 0) {
+            console.log(`${100 * i}: ${trialNum} build task occurred.`);
+        }
 
         totalTrial += trialNum;
 
