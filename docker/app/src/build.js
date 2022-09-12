@@ -76,7 +76,7 @@ function get_clang_options(options) {
   }
   const available_options = [
     '-O0', '-O1', '-O2', '-O3', '-Oz', '-Os', 
-    '-fno-exceptions', '-fno-rtti', '-ffast-math', '-fno-inline', '-fcoroutine-ts',
+    '-fno-exceptions', '-fno-rtti', '-ffast-math', '-fno-inline', '-fcoroutine-ts', '-fcolor-diagnostics',
     '-mreference-types',
     '-std=c89', '-std=c99', '-std=c11', 
     '-std=c++98', '-std=c++11', '-std=c++14', '-std=c++17', '-std=c++2a',
@@ -90,20 +90,13 @@ function get_clang_options(options) {
     '-I/include/OpenSiv3Dv0.6/', '-I/include/OpenSiv3Dv0.6/ThirdParty/',
     '-include-pch /include/OpenSiv3Dv0.6/Siv3D.O0.pch', '-include-pch /include/OpenSiv3Dv0.6/Siv3D.O2.pch',
     '-include-pch /include/OpenSiv3Dv0.6/Siv3D.Oz.pch',
-    '-s ALLOW_MEMORY_GROWTH=1', 
     '-s DISABLE_EXCEPTION_CATCHING=0', '-s DISABLE_EXCEPTION_CATCHING=2',
-    '-s SIMD=1', '-s DEMANGLE_SUPPORT=1',
-    '-s FULL_ES2=1', '-s FULL_ES3=1', '-s USE_WEBGPU=1',
-    '-s USE_GLFW=3',
-    '-s EXPORT_ALL=1',
     '-s MAIN_MODULE=1', '-s SIDE_MODULE=1', '-s STRICT_JS=1',
     '-s MAIN_MODULE=2', '-s SIDE_MODULE=2',
     '-s USE_SDL=0', '-s USE_SDL_IMAGE=0', '-s USE_SDL_TTF=0', '-s USE_SDL_NET=0',
     '-s USE_SDL=2', '-s USE_SDL_IMAGE=2', '-s USE_SDL_TTF=2', '-s USE_SDL_NET=2',
     '-s USE_ZLIB=1', '-s USE_LIBJPEG=1', '-s USE_LIBPNG=1',
     '-s USE_BULLET=1', '-s USE_VORBIS=1', '-s USE_OGG=1', '-s USE_FREETYPE=1',
-    '-s FETCH=1', '-s MINIMAL_RUNTIME=1',
-    '--use-preload-plugins', '--emrun',
 
     '-D_XM_NO_INTRINSICS_',
   ];
@@ -127,11 +120,11 @@ function get_lld_options(options) {
   }
   const available_options = [
     '--import-memory', '-g',
-    // '-O0', '-O1', '-O2', '-O3', '-Oz', '-Os',
-    '-fcoroutines-ts',
+    '-O0', '-O1', '-O2', '-O3', '-Oz', '-Os',
+    '-fcoroutines-ts', '-fcolor-diagnostics',
     '-s ALLOW_MEMORY_GROWTH=1', 
     '-s DISABLE_EXCEPTION_CATCHING=0', '-s DISABLE_EXCEPTION_CATCHING=2',
-    '-s SIMD=1', '-s DEMANGLE_SUPPORT=1',
+    '-s DEMANGLE_SUPPORT=1',
     '-s FULL_ES2=1', '-s FULL_ES3=1', '-s USE_WEBGPU=1', 
     '-s USE_GLFW=3',
     '-s ASYNCIFY=1', '-s EXPORT_ALL=1',
@@ -149,7 +142,6 @@ function get_lld_options(options) {
     '-s ASYNCIFY_IMPORTS="[ \'_ZN3s3d6System6UpdateEv\' ]"',
     '-s ASYNCIFY_IMPORTS="[ \'_ZN3s3d6System6UpdateEv\', \'_ZN3s3d7TextureC1ENS_10StringViewENS_11TextureDescE\', \'_ZN3s3d5ImageC1ENS_10StringViewENS_11ImageFormatE\', \'_ZN3s3d5AudioC1ENS_10StringViewE\', \'_ZN3s3d5AudioC1ENS_10StringViewENS_5YesNoINS_8Loop_tagEEE\' ]"',
     '-s ASYNCIFY_ADD="[ \'Main()\' ]"',
-    '-D_XM_NO_INTRINSICS_',
   ];
   let safe_options = '';
   for (let o of available_options) {
