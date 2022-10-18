@@ -119,7 +119,8 @@ function get_lld_options(options) {
     return clang_flags;
   }
   const available_options = [
-    '--import-memory', '-g', '--no-export-dynamic', '--export-dynamic',
+    '--import-memory', '-g', 
+    '--no-export-dynamic', '--export-dynamic', '-fvisibility=default', '-fvisibility=hidden',
     '-O0', '-O1', '-O2', '-O3', '-Oz', '-Os',
     '-fcoroutines-ts', '-fcolor-diagnostics',
     '-s ALLOW_MEMORY_GROWTH=1', 
