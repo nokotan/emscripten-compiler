@@ -119,7 +119,7 @@ function get_lld_options(options) {
     return clang_flags;
   }
   const available_options = [
-    '--import-memory', '-g',
+    '--import-memory', '-g', '--no-export-dynamic', '--export-dynamic',
     '-O0', '-O1', '-O2', '-O3', '-Oz', '-Os',
     '-fcoroutines-ts', '-fcolor-diagnostics',
     '-s ALLOW_MEMORY_GROWTH=1', 
@@ -141,6 +141,7 @@ function get_lld_options(options) {
     '-s ASYNCIFY=1', '-s ASYNCIFY_IGNORE_INDIRECT=1',
     '-s ASYNCIFY_IMPORTS="[ \'_ZN3s3d6System6UpdateEv\' ]"',
     '-s ASYNCIFY_IMPORTS="[ \'_ZN3s3d6System6UpdateEv\', \'_ZN3s3d7TextureC1ENS_10StringViewENS_11TextureDescE\', \'_ZN3s3d5ImageC1ENS_10StringViewENS_11ImageFormatE\', \'_ZN3s3d5AudioC1ENS_10StringViewE\', \'_ZN3s3d5AudioC1ENS_10StringViewENS_5YesNoINS_8Loop_tagEEE\' ]"',
+    '-s ASYNCIFY_IMPORTS="[ \'_ZN3s3d6System6UpdateEv\', \'_ZN3s3d7TextureC1ENS_10StringViewENS_11TextureDescE\', \'_ZN3s3d5ImageC1ENS_10StringViewENS_11ImageFormatE\', \'_ZN3s3d5AudioC1ENS_10StringViewE\', \'_ZN3s3d5AudioC1ENS_10StringViewENS_5YesNoINS_8Loop_tagEEE\', \'_ZN3s3d5ModelC1ENS_10StringViewENS_11ColorOptionE\' ]"',
     '-s ASYNCIFY_ADD="[ \'Main()\' ]"',
   ];
   let safe_options = '';
