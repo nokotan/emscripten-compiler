@@ -52,7 +52,7 @@ function generate_regexp_from_pattern(pattern) {
 }
 
 function sanitize_shell_output(out, cwd) {
-  return out.replace(generate_regexp_from_pattern(cwd), ''); // FIXME
+  return out.replace(generate_regexp_from_pattern(cwd), '.'); // FIXME
 }
 
 async function shell_exec(cmd, cwd = tempDir) {
