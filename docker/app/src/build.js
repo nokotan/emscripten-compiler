@@ -279,7 +279,7 @@ async function build_project(project, base, callback) {
     const fileName = dir + '/' + name;
     const subdir = dirname(fileName);
     if (!existsSync(subdir)) {
-      mkdirSync(dir);
+      mkdirSync(subdir);
     }
     const src = file.src;
     await writeFileAsync(fileName, src);
