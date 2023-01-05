@@ -64,7 +64,7 @@ async function shell_exec(cmd, cwd = tempDir) {
   } catch (ex) {
     error = ex.message;
   }
-  const result = (out && out.stdout) || error;
+  const result = (out && out.stderr) || error;
   return result;
 }
 
