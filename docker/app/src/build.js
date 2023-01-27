@@ -81,6 +81,7 @@ function get_clang_options(options) {
     '-std=c89', '-std=c99', '-std=c11', 
     '-std=c++98', '-std=c++11', '-std=c++14', '-std=c++17', '-std=c++2a',
     '-g', '-Wall',
+    '-Iinclude',
     '-I/include/DxLib/',
     '-include-pch /include/DxLib/DxLib.O0.pch', '-include-pch /include/DxLib/DxLib.O2.pch',
     '-include-pch /include/DxLib/DxLib.Oz.pch',
