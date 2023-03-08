@@ -34,6 +34,6 @@ jobs:
       - name: Build App
         uses: docker/build-push-action@v2
         with:
-          push: false
-          context: ./docker/
-          tags: nokotan/emscripten-compiler-slug:latest
+          push: true
+          context: ./app/
+          tags: nokotan/emscripten-compiler-server:latest

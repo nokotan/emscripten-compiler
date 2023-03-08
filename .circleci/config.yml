@@ -44,7 +44,8 @@ jobs:
           name: Check emscripten version and update
           shell: bash
           command: |
-            bash docker/UpdateEmscripten.sh
+            cd app
+            bash ../scripts/UpdateEmscripten.sh
 
 
   update_docker:
@@ -67,7 +68,8 @@ jobs:
           name: Check docker version and update
           shell: bash
           command: |
-            bash docker/UpdateDockerHub.sh
+            cd app
+            bash ../scripts/UpdateDockerHub.sh
 
 workflows:
   version: 2
