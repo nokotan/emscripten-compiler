@@ -4,16 +4,16 @@ const wasmceptionDir = process.env["WASMCEPTION"] ||
   (__dirname + '/../wasmception');
 const emscriptenDir = process.env["EMSDK"];
 
-exports.sysroot = onServer ?
+export const sysroot = onServer ?
   homeDir + '/sysroot' :
   wasmceptionDir + '/sysroot';
 
-exports.llvmDir = onServer ?
+export const llvmDir = onServer ?
   homeDir + '/clang' :
   wasmceptionDir + '/dist';
 
-exports.emccDir = (onServer || true) ?
+export const emccDir = (onServer || true) ?
   emscriptenDir + '/emscripten/sdk':
   emscriptenDir + '/upstream/emscripten';
 
-exports.tempDir = "/tmp";
+export const tempDir = "/tmp";

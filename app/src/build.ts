@@ -1,18 +1,64 @@
 // Translated from https://github.com/wasdk/wasmexplorer-service/blob/master/web/build.php
 // FIXME make me node.js friendly and async
 
-const { promisify } = require("util")
-const { emccDir, llvmDir, tempDir, sysroot } = require("../config");
-const { mkdirSync, writeFile, existsSync, readFile, unlinkSync } = require("fs");
-const { deflate } = require("zlib");
-const { dirname } = require("path");
-const { exec } = require("child_process");
-const { Writable } = require("stream");
+import { promisify } from "util";
+import { emccDir, llvmDir, tempDir, sysroot } from "./config";
+import { mkdirSync, writeFile, existsSync, readFile, unlinkSync } from "fs";
+import { deflate } from "zlib";
+import { dirname } from "path";
+import { exec } from "child_process";
+import { Writable } from "stream";
 
 const deflateAsync = promisify(deflate);
 const execAsync = promisify(exec);
 const writeFileAsync = promisify(writeFile);
 const readFileAsync = promisify(readFile);
+
+export interface BuildTask {
+
+  type: string;
+
+  name: string;
+
+  options: string;
+
+  src: string;
+}
+
+export interface BuildRequest {
+
+  output: string;
+
+  files: BuildTask[];
+
+  link_options: string;
+
+  compress: boolean;
+}
+
+export interface BuildTaskResult {
+
+  name: string;
+
+  file?: string;
+
+  success?: boolean;
+
+  console?: string;
+}
+
+export interface BuildResult {
+
+  success?: boolean;
+
+  tasks?: BuildTaskResult[];
+
+  message?: string;
+
+  output?: string;
+
+  wasmBindgenJs?: string;
+}
 
 // Input: JSON in the following format
 // {
@@ -47,15 +93,15 @@ const readFileAsync = promisify(readFile);
 //     ]
 // }
 
-function generate_regexp_from_pattern(pattern) {
+function generate_regexp_from_pattern(pattern: string) {
   return new RegExp(pattern.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
 }
 
-function sanitize_shell_output(out, cwd) {
+function sanitize_shell_output(out: string, cwd: string) {
   return out.replace(generate_regexp_from_pattern(cwd), '.'); // FIXME
 }
 
-async function shell_exec(cmd, cwd = tempDir) {
+async function shell_exec(cmd: string, cwd = tempDir) {
   console.log(cmd);
   let out;
   let error = '';
@@ -68,7 +114,7 @@ async function shell_exec(cmd, cwd = tempDir) {
   return result;
 }
 
-function get_clang_options(options) {
+function get_clang_options(options : string) {
   // const clang_flags = `--target=wasm32-unknown-unknown-wasm --sysroot=${sysroot} -fdiagnostics-print-source-range-info -fno-exceptions`;
   const clang_flags = ``;
   if (!options) {
@@ -113,7 +159,7 @@ function get_clang_options(options) {
 }
 
 
-function get_lld_options(options) {
+function get_lld_options(options: string) {
   // const clang_flags = `--target=wasm32-unknown-unknown-wasm --sysroot=${sysroot} -nostartfiles -Wl,--allow-undefined,--no-entry,--no-threads,--export-dynamic`;
   const clang_flags = ``;
   if (!options) {
@@ -159,7 +205,7 @@ function get_lld_options(options) {
   return clang_flags + safe_options;
 }
 
-function is_side_module_build(options) {
+function is_side_module_build(options: string) {
   const available_options = [
     '-s SIDE_MODULE=1', '-s SIDE_MODULE=2',
   ];
@@ -173,7 +219,7 @@ function is_side_module_build(options) {
   return false;
 }
 
-async function serialize_file_data(filename, compress) {
+async function serialize_file_data(filename: string, compress: boolean) {
   let content = await readFileAsync(filename);
   if (compress) {
     content = await deflateAsync(content);
@@ -181,7 +227,7 @@ async function serialize_file_data(filename, compress) {
   return content.toString("base64");
 }
 
-async function get_file_data(filename, compress) {
+async function get_file_data(filename: string, compress: boolean) {
   let content = await readFileAsync(filename);
   if (compress) {
     content = await deflateAsync(content);
@@ -189,7 +235,7 @@ async function get_file_data(filename, compress) {
   return content.toString();
 }
 
-async function build_c_file(input, options, output, cwd, compress, result_obj) {
+async function build_c_file(input: string, options: string, output: string, cwd: string, compress: boolean, result_obj: BuildTaskResult) {
   // const cmd = llvmDir + '/bin/clang ' + get_clang_options(options) + ' ' + input + ' -o ' + output;
   const cmd = emccDir + '/emcc ' + get_clang_options(options) + ' ' + input + ' -o ' + output;
   const out = await shell_exec(cmd, cwd);
@@ -203,7 +249,7 @@ async function build_c_file(input, options, output, cwd, compress, result_obj) {
   return true;
 }
 
-async function build_cpp_file(input, options, output, cwd, compress, result_obj) {
+async function build_cpp_file(input: string, options: string, output: string, cwd: string, compress: boolean, result_obj: BuildTaskResult) {
   // const cmd = llvmDir + '/bin/clang++ ' + get_clang_options(options) + ' ' + input + ' -o ' + output;
   const cmd = emccDir + '/em++ ' + get_clang_options(options) + ' ' + input + ' -o ' + output;
   const out = await shell_exec(cmd, cwd);
@@ -217,7 +263,7 @@ async function build_cpp_file(input, options, output, cwd, compress, result_obj)
   return true;
 }
 
-function validate_filename(name) {
+function validate_filename(name: string) {
   if (!/^[0-9a-zA-Z\-_.]+(\/[0-9a-zA-Z\-_.]+)*$/.test(name)) {
     return false;
   }
@@ -230,7 +276,7 @@ function validate_filename(name) {
   return parts;
 }
 
-async function link_obj_files(obj_files, options, cwd, has_cpp, output, result_obj) {
+async function link_obj_files(obj_files: string[], options: string, cwd: string, has_cpp: boolean, output: string, result_obj: BuildTaskResult) {
   const files = obj_files.join(' ');
   let clang;
   if (has_cpp) {
@@ -251,15 +297,15 @@ async function link_obj_files(obj_files, options, cwd, has_cpp, output, result_o
   return true;
 }
 
-async function build_project(project, base, callback) {
+async function build_project(project: BuildRequest, base: string, callback: (r: BuildResult) => void) {
   const output = project.output;
   const compress = project.compress;
-  const build_result = { };
+  const build_result: BuildResult = { };
   const dir = base + '.$';
   const result_wasm = dir + '/main.wasm';
   const result_js = dir + '/main.js';
 
-  const complete = async (success, message) => {
+  const complete = async (success: boolean, message: string) => {
     shell_exec("rm -rf " + dir);
   
     build_result.success = success;
@@ -346,7 +392,7 @@ async function build_project(project, base, callback) {
   return complete(true, 'Success');
 }
 
-module.exports = (input, callback) => {
+export function build(input: BuildRequest, callback: (e: Error, r?: BuildResult) => void) {
   const baseName = tempDir + '/build_' + Math.random().toString(36).slice(2);
   try {
     console.log('Building in ', baseName);

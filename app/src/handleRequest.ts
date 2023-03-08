@@ -1,18 +1,20 @@
-var qs = require('querystring');
-const { deflate } = require("zlib");
+import * as qs from 'querystring';
+import { deflate } from 'zlib';
+import { ServerResponse, IncomingMessage } from 'http';
+import { build, BuildRequest, BuildResult } from './build';
 
-function notAllowed(res) {
+function notAllowed(res: ServerResponse) {
   res.writeHead(503);
   res.end();
 }
 
-function showError(res, err) {
+function showError(res: ServerResponse, err: Error) {
   console.log(err.toString());
   res.writeHead(501);
   res.end(`<pre>${err.toString()}</pre>`);
 }
 
-function readFormData(request, type, callback) {
+function readFormData(request: IncomingMessage, type: "json" | "form", callback: (e?: Error, r?: BuildRequest & { action: string }) => void) {
   var body = '';
 
   request.on('data', function (data) {
@@ -34,7 +36,7 @@ function readFormData(request, type, callback) {
   });
 }
 
-module.exports = function handleRequest(req, res) {
+export function handleRequest(req: IncomingMessage, res: ServerResponse) {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   res.setHeader('Access-Control-Allow-Methods', 'OPTIONS, GET, POST');
@@ -45,32 +47,11 @@ module.exports = function handleRequest(req, res) {
     return;
   }
 
-  if (req.url == "/service.php") {
-    if (req.method != "POST") return notAllowed(res);
-    readFormData(req, "form", (err, post) => {
-      if (err) return showError(res, err);
-      if (post.action != "build") return notAllowed(res);
-      let input;
-      try {
-        input = JSON.parse(post.input);
-      } catch (e) {
-        return showError(res, e);
-      }
-      require('./build')(input, (err, result) => {
-        if (err) return showError(res, err);
-        res.setHeader('Content-type', 'application/json');
-        res.writeHead(200);
-        res.end(JSON.stringify(result));
-      });
-    });
-    return;
-  }
-
   if (req.url == "/build") {
     if (req.method != "POST") return notAllowed(res);
-    readFormData(req, "json", (err, input) => {
+    readFormData(req, "json", (err: Error, input: BuildRequest) => {
       if (err) return showError(res, err);
-      require('./build')(input, (err, result) => {
+      build(input, (err, result) => {
         if (err) return showError(res, err);
         res.setHeader('Content-type', 'application/json; charset=utf-8');
         res.setHeader('Content-Encoding', 'deflate');

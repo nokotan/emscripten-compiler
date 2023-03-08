@@ -7,9 +7,7 @@ WORKDIR /src
 # Copy this Dockerimage into image, so that it will be possible to recreate it later
 COPY Dockerfile /
 
-COPY index.js config.js /app/
-
-COPY src/ /app/src/
+COPY dist/ /app/
 
 LABEL maintainer="kamenokonokotan@gmail.com" \
       org.label-schema.name="emscripten-compiler-app" \
