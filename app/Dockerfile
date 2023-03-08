@@ -52,4 +52,4 @@ LABEL maintainer="kamenokonokotan@gmail.com" \
       org.label-schema.docker.dockerfile="/app/Dockerfile"
 
 SHELL ["/bin/bash", "-c"]
-CMD node /app/index.js
+CMD node /index.js
